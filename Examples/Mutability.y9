@@ -1,0 +1,14 @@
+@bring /io.standard/
+
+entry main()
+{
+    mut num score = 0;
+
+    display.show(score);
+
+    score = 10;
+
+    display.show(score);
+
+    return 0;
+}
