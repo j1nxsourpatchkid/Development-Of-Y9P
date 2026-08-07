@@ -49,6 +49,10 @@ together.
 Errors currently report what went wrong but not the line or column number
 in the source file.
 
-## No comments in .y9 source files
-
 There is currently no syntax for writing comments inside a .y9 file.
+
+## Documentation comments are not yet functional
+
+/// is recognized and parsed the same as //, but there is no doc-generation
+tool or special handling for /// comments yet. They are purely decorative
+right now, identical to a regular // comment.
