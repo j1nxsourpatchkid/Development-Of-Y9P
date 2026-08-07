@@ -3,5 +3,6 @@
 entry main()
 {
     display.show("Hello, world!");
+
     return 0;
 }
