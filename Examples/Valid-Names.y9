@@ -1,0 +1,14 @@
+@bring /io.standard/
+
+entry main()
+{
+    num health2 = 100;
+    string playerName = "Alex";
+    bool _score = true;
+
+    display.show(health2);
+    display.show(playerName);
+    display.show(_score);
+
+    return 0;
+}
