@@ -1,0 +1,17 @@
+@bring /io.standard/
+
+entry main()
+{
+    num age = 20;
+    bool adult = age >= 18;
+    display.show(adult);
+
+    bool result = 5 + 3 > 2 * 3;
+    display.show(result);
+
+    display.show("apple" < "banana");
+    display.show('A' == 'A');
+    display.show(true != false);
+
+    return 0;
+}
