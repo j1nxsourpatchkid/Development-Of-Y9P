@@ -1,0 +1,8 @@
+entry main()
+{
+    num x = -5;
+    if (x > 0) display.show("positive");
+    elif (x < 0) display.show("negative");
+    else display.show("zero");
+    return 0;
+}
