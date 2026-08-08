@@ -1,0 +1,10 @@
+entry main()
+{
+    mut num x = 5;
+    if (x > 0) do
+    {
+        return x + 2;
+    }
+    return 0;
+}
+// exit code 7
