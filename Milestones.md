@@ -2,6 +2,7 @@
 [ DISCLAIMER: These will fill up quickly ]
 ## Libraries & Capabilities
 
+* ❌ Ability to create libraries
 * ❌ Geolocator
 * ❌ Advanced mathematics library
 * ❌ Microcontroller control
