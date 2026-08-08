@@ -6,7 +6,11 @@ Everything Y9+ can do as of the current implementation.
 
 ## Program Structure
 
-* Every program requires an `entry main()` function returning an `int`.
+* Every program requires an `entry main()` function.
+* Returning an exit code (e.g. `return 0;`) is optional in `entry main()`.
+* If `entry main()` finishes without reaching a return statement, execution automatically returns `0`.
+* An explicit `return expr;` in `entry main()` must produce an integer-compatible `int`.
+* An empty `return;` without a value is invalid inside `entry main()` and causes a runtime error.
 * User-defined functions (`fn`) are declared above `entry main()`.
 * `@bring` imports are parsed but not enforced (decorative only).
 
@@ -20,7 +24,6 @@ entry main()
 {
     int result = add(5, 3);
     display.show(result);
-    return 0;
 }
 ```
 
@@ -308,10 +311,7 @@ bool check = isReady || !hasFailed;
 For example, the right-hand side of `||` is not evaluated when the left-hand side is already `true`.
 
 ```y9
-if (a || (1 / 0 == 0)) do
-{
-    display.show("Short-circuit works!");
-}
+if (a || (1 / 0 == 0)) do display.show("Short-circuit works!");
 ```
 
 ---
@@ -404,8 +404,7 @@ Both block and single-statement forms are supported.
 Single statement:
 
 ```y9
-if (x > 5) do
-    display.show("big");
+if (x > 5) do display.show("big");
 ```
 
 Block:
@@ -421,7 +420,7 @@ if (x > 5) do
 The same body rule applies to `if`, `elif`, `else`, `while`, and `for`:
 
 * Multiple statements require `{ }`.
-* Exactly one statement may omit `{ }` after `do`.
+* Exactly one statement may omit `{ }` by sitting on the same line to the right of `do`.
 
 ---
 
@@ -441,8 +440,7 @@ Repeats while the condition evaluates to `true`.
 Single-statement bodies are also supported:
 
 ```y9
-while (x < 5) do
-    display.show(x);
+while (x < 5) do display.show(x);
 ```
 
 The condition must evaluate to `bool`.
@@ -512,10 +510,7 @@ initialization ; condition ; update
 The initialization can declare a variable:
 
 ```y9
-for (change int i = 0; i < 10; i += 1) do
-{
-    display.show(i);
-}
+for (change int i = 0; i < 10; i += 1) do display.show(i);
 ```
 
 Or use an existing variable:
@@ -523,10 +518,7 @@ Or use an existing variable:
 ```y9
 change int i = 0;
 
-for (i = 0; i < 10; i += 1) do
-{
-    display.show(i);
-}
+for (i = 0; i < 10; i += 1) do display.show(i);
 ```
 
 The update supports:
@@ -569,8 +561,7 @@ Example:
 ```y9
 for i in 0..10 do
 {
-    if (i == 5) do
-        break;
+    if (i == 5) do break;
 
     display.show(i);
 }
@@ -601,8 +592,7 @@ Example:
 ```y9
 for i in 0..10 do
 {
-    if (i == 5) do
-        next;
+    if (i == 5) do next;
 
     display.show(i);
 }
@@ -614,7 +604,11 @@ for i in 0..10 do
 
 `return expr;` immediately exits a function with the evaluated expression result.
 
-`entry main()` must return an integer-compatible `int`.
+`entry main()` may explicitly return an integer-compatible `int`, but an explicit return is optional.
+
+If `entry main()` finishes without reaching a return statement, it automatically returns `0`.
+
+An empty `return;` without a value is invalid inside `entry main()` and causes a runtime error.
 
 ```y9
 return 0;
@@ -665,10 +659,7 @@ fn filterEvens(int[] nums) -> int[]
 
     for (change int i = 0; i < nums.length; i += 1) do
     {
-        if (isEven(nums[i]) && nums[i] > 0) do
-        {
-            evens.push(nums[i]);
-        }
+        if (isEven(nums[i]) && nums[i] > 0) do evens.push(nums[i]);
     }
 
     return evens;
@@ -681,8 +672,6 @@ entry main()
 
     display.show("Filtered evens:");
     display.show(evensOnly);
-
-    return 0;
 }
 ```
 
