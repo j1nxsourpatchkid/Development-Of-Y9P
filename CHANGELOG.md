@@ -1,13 +1,10 @@
-# CHANGELOG
-
-This file reflects the current state of Y9+, not a dated history.
-It is updated in place as the language changes.
+# Release Number: 2026.08.08 - 4
 
 ## Program structure
 
 Every program requires an `entry main()` function and a `return` statement.
 
-`@bring` imports are supported syntactically but are not currently enforced.
+`@bring` imports are parsed and stored but are not currently enforced or used at runtime.
 
 ## Printing
 
@@ -15,93 +12,72 @@ Every program requires an `entry main()` function and a `return` statement.
 
 ## Input
 
-`input.read()` reads user input from the terminal.
-
-Input can be used directly as an expression:
-
-```y9
+**Expression form** (returns a value):
 string name = input.read();
 num age = input.read("Enter your age: ");
-```
 
-It can also write directly into an existing mutable variable:
+**Statement form** (writes into a mutable variable, optional prompt):
+mut num x = 0;
+input.read(x);
+input.read("Enter value: ", x);
 
-```y9
-mut string name = "";
-input.read(name);
-```
-
-Prompts are optional:
-
-```y9
-string name = input.read("Enter your name: ");
-```
-
-Input is type-aware when an expected type is available.
-
-Supported input types include:
-
-* `num`
-* `float`
-* `deci`
-* `bool`
-* `chr`
-* `string`
-
-Numeric, boolean, and character input is parsed according to the expected type.
-String input is preserved exactly as entered.
+Input is type‑aware when an expected type is available.
+Supported types: num, float, deci, bool, chr, string.
 
 Invalid input produces a runtime error.
-
-When `input.read()` has no expected type, such as when used directly inside
-`display.show(...)`, it defaults to `string`.
-
-Direct input into an existing variable requires that variable to be declared
-with `mut`.
+When no expected type exists, input defaults to string.
 
 ## Variables
 
-Six types: `num`, `float`, `deci`, `bool`, `chr`, `string`. Type is required,
-never inferred. Variables are immutable by default; `mut` allows reassignment.
+Six types: num, float, deci, bool, chr, string.
+Type is required, never inferred.
+Immutable by default; mut allows reassignment.
 
 ## Type checking
 
-Declared types are enforced. Assigning a mismatched type throws a runtime
-error, both on declaration and reassignment.
+Declared types are enforced. Assigning a mismatched type throws a runtime error on both declaration and reassignment.
 
 ## Comments
 
-`//` for single-line comments, `///` for documentation comments. Both are
-currently skipped identically by the lexer with no functional difference.
+// for single‑line comments. /// is recognised but has no special behaviour yet.
 
 ## Expressions
 
-Full arithmetic: `+`, `-`, `*`, `/` between numbers, with correct operator
-precedence and numeric type widening (`num -> float -> deci`).
+Arithmetic: +, -, *, / on numbers, with correct precedence and numeric type widening (num → float → deci).
 
-Strings support `+` (concatenation), `-` (removes all occurrences of a
-substring), and `*` (repetition with a number).
+Strings support:
+- + (concatenation)
+- - (removes all occurrences of a substring)
+- * (repetition with a number)
 
 Division by zero throws an error.
+Unary negation works on literals and variables (-5, -x).
 
-Unary negation works on both literals and variables (`-5`, `-x`).
+## Compound assignment
+
++=, -=, *=, /= for numeric types (num, float, deci).
++= for string (concatenation).
+All compound operators require the target variable to be mutable.
 
 ## Comparisons
 
-`==`, `!=`, `<`, `>`, `<=`, `>=` all produce a `bool`.
+==, !=, <, >, <=, >= produce a bool.
+Works across numeric types (with widening), strings/chars (lexicographic), and bools (equality only).
 
 ## Control flow
 
-`if`, `elif`, and `else` are supported.
+if / elif / else – condition must be bool.
+Both single‑statement and block forms are supported.
 
-Conditions use parentheses and must evaluate to `bool`.
+while (condition) do { ... } – loops while condition is true.
 
-Both single-statement and block forms are supported:
+for loops:
+- Range‑based: for i in startExpr..endExpr do { ... }  (optional step clause)
+- C‑style:    for (init; condition; update) do { ... }
 
-```y9
-if (age >= 18) display.show("Adult");
+break;  – exits the innermost loop.
+next;   – skips to the next iteration of the innermost loop.
+return; – now accepts any integer‑compatible expression.
 
-Works across numeric types (with widening), strings and chars
-(lexicographic ordering), and bools (equality only, no ordering).
-
-Standard precedence applies: arithmetic evaluates before comparison.
+All loop variables declared inside for are scoped to the loop body and are immutable.
+break / next / return work consistently inside while and for loops.
