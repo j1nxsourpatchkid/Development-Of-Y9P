@@ -16,7 +16,6 @@ implemented and working — see `known-limitations.md` for what doesn't exist ye
 ## What this repo is
 
 This is the **manual** — the rulebook for Y9+ syntax and language rules.
-The interpreter/compiler source code lives in a separate repository.
 
 ## Structure
 
