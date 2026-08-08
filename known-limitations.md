@@ -22,10 +22,6 @@ supported arithmetic and comparison operators.
 Only single values are supported. There is no way to group multiple values
 together.
 
-## No loops
-
-There is currently no loop syntax such as `while`, `for`, or `foreach`.
-
 ## Limited error messages
 
 Errors currently report what went wrong but not the line or column number
