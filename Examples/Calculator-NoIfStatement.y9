@@ -1,0 +1,20 @@
+@bring /io.standard/
+
+entry main()
+{
+    mut num a = 0;
+    mut num b = 0;
+
+    display.show("Enter first number: ");
+    input.read(a);
+
+    display.show("Enter second number: ");
+    input.read(b);
+
+    display.show(a + b);
+    display.show(a - b);
+    display.show(a * b);
+    display.show(a / b);
+
+    return 0;
+}
