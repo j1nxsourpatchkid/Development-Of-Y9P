@@ -1,8 +1,0 @@
-@bring /io.standard/
-
-entry main()
-{
-    display.show("Hello, world!");
-
-    return 0;
-}
