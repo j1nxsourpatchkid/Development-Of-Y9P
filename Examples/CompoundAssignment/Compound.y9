@@ -1,0 +1,20 @@
+entry main()
+{
+    mut num a = 10;
+    a += 5;
+    display.show(a);
+    a -= 3;
+    display.show(a);
+    a *= 2;
+    display.show(a);
+
+    mut float f = 5.0;
+    f /= 2.0;
+    display.show(f);
+
+    mut string s = "Hello";
+    s += " World";
+    display.show(s);
+
+    return 0;
+}
