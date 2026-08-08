@@ -1,1 +1,28 @@
+@bring /io.standard/
 
+entry main()
+{
+    mut num age = 0;
+    mut float speed = 0.0;
+    mut bool alive = false;
+    mut chr letter = 'A';
+
+    display.show("Enter your age: ");
+    input.read(age);
+
+    display.show("Enter a speed: ");
+    input.read(speed);
+
+    display.show("Alive? (true/false): ");
+    input.read(alive);
+
+    display.show("Enter one letter: ");
+    input.read(letter);
+
+    display.show(age);
+    display.show(speed);
+    display.show(alive);
+    display.show(letter);
+
+    return 0;
+}
