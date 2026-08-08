@@ -1,0 +1,21 @@
+@bring /io.standard/
+
+entry main()
+{
+    num a = 5;
+    num b = 3;
+    display.show(a + b * 2);
+
+    string first = "Hello ";
+    string second = "World";
+    display.show(first + second);
+
+    string repeated = "Hi" * 3;
+    display.show(repeated);
+
+    num x = -5;
+    num y = -x;
+    display.show(y);
+
+    return 0;
+}
