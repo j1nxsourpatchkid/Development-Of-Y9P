@@ -6,13 +6,20 @@ Everything Y9+ can do as of the current implementation.
 
 ## Program Structure
 
-* Every program requires an `entry main()` function.
+* Every program requires an `entry main()` function returning an `int`.
+* User-defined functions (`fn`) are declared above `entry main()`.
 * `@bring` imports are parsed but not enforced (decorative only).
 
 ```y9
+fn add(int a, int b) -> int
+{
+    return a + b;
+}
+
 entry main()
 {
-    // code here
+    int result = add(5, 3);
+    display.show(result);
     return 0;
 }
 ```
@@ -21,12 +28,13 @@ entry main()
 
 ## Output
 
-`display.show(expr)` prints a value. It accepts literals, variables, and expressions.
+`display.show(expr)` prints a value. It accepts literals, variables, expressions, and arrays.
 
 ```y9
 display.show("Hello");
 display.show(42);
 display.show(x + 1);
+display.show([1, 2, 3]);
 ```
 
 ---
@@ -39,7 +47,7 @@ Returns a value. A prompt is optional.
 
 ```y9
 string name = input.read();
-num age = input.read("Enter your age: ");
+int age = input.read("Enter your age: ");
 ```
 
 ### Statement Form
@@ -47,14 +55,15 @@ num age = input.read("Enter your age: ");
 Writes directly into an existing mutable variable. A prompt is optional.
 
 ```y9
-mut num x = 0;
+change int x = 0;
+
 input.read(x);
 input.read("Enter value: ", x);
 ```
 
 Supported input types:
 
-* `num`
+* `int`
 * `float`
 * `deci`
 * `bool`
@@ -69,9 +78,9 @@ When no expected type is available, `input.read()` defaults to `string`.
 
 ## Variables
 
-Six types are supported:
+Six primitive types are supported:
 
-* `num` — integer
+* `int` — integer
 * `float`
 * `deci`
 * `bool`
@@ -80,16 +89,122 @@ Six types are supported:
 
 Types must be explicitly declared.
 
-Variables are immutable by default. Use `mut` to allow reassignment.
+Variables are immutable by default. Use `change` to allow reassignment.
 
 Type checking is enforced at runtime.
 
 ```y9
-num x = 10;
-mut float y = 3.14;
+int x = 10;
+change float y = 3.14;
 bool flag = true;
 string s = "hello";
 chr c = 'A';
+```
+
+---
+
+## Arrays
+
+Arrays are ordered, dynamically sized collections of elements.
+
+### Declaration & Literals
+
+Array types are declared using `type[]`.
+
+Array literals use square brackets.
+
+```y9
+int[] numbers = [1, 2, 3, 4, 5];
+change string[] names = ["Alice", "Bob"];
+change int[] emptyList = [];
+```
+
+Numeric elements inside array literals are automatically widened when types are mixed.
+
+For example, `[1, 2.5]` produces a `float[]`.
+
+### Indexing & Assignment
+
+Arrays use 0-based indexing for reading and writing.
+
+```y9
+int first = numbers[0];
+
+numbers[0] = 99;
+```
+
+Accessing an out-of-bounds index produces a runtime error.
+
+### Array Property
+
+`.length` returns the number of elements in the array as an `int`.
+
+```y9
+int len = numbers.length;
+```
+
+### Array Methods
+
+`.push(val)` appends a value to the end of the array and returns the new length.
+
+`.pop()` removes and returns the last element.
+
+`.remove(index)` removes and returns the element at the specified index.
+
+```y9
+change int[] items = [10, 20];
+
+items.push(30);
+
+int last = items.pop();
+
+int item = items.remove(0);
+```
+
+After these operations, `items` is `[20]`.
+
+---
+
+## Functions
+
+Custom functions are declared using `fn`.
+
+### Syntax
+
+```y9
+fn doubleValue(int n) -> int
+{
+    return n * 2;
+}
+```
+
+Functions may accept zero or more parameters.
+
+Parameters are immutable by default. Use `change` before a parameter type to make it mutable within the function.
+
+```y9
+fn increment(change int val) -> int
+{
+    val += 1;
+    return val;
+}
+```
+
+Return type annotations use `-> Type`.
+
+Functions that omit `-> Type` are treated as void functions.
+
+```y9
+fn sayHello()
+{
+    display.show("Hello");
+}
+```
+
+Functions can be called from `entry main()` or from other functions.
+
+```y9
+int result = doubleValue(5);
 ```
 
 ---
@@ -101,6 +216,8 @@ chr c = 'A';
 ```
 
 `///` documentation comments are recognized but currently have no special behavior.
+
+They are parsed the same way as regular `//` comments and are currently decorative only.
 
 ---
 
@@ -118,21 +235,21 @@ Multiplication and division have higher precedence than addition and subtraction
 Numeric type widening:
 
 ```text
-num → float → deci
+int → float → deci
 ```
 
 when mixing numeric types.
 
 ```y9
-num a = 5 + 3 * 2;
+int a = 5 + 3 * 2;
 float b = 10 / 3.0;
 ```
 
-Unary negation works on literals and variables.
+Unary negation works on numeric literals, variables, and expressions.
 
 ```y9
-num c = -5;
-num d = -x;
+int c = -5;
+int d = -a;
 ```
 
 ### String Operators
@@ -155,7 +272,7 @@ Result:
 bnn
 ```
 
-`*` repeats a string by a number:
+`*` repeats a string by an integer:
 
 ```y9
 string a = "ab" * 3;
@@ -171,6 +288,34 @@ Division by zero causes a runtime error.
 
 ---
 
+## Logical Operators
+
+Supported operators:
+
+* `&&` — Logical AND
+* `||` — Logical OR
+* `!` — Logical NOT
+
+Logical operators operate on `bool` values.
+
+`&&` and `||` use short-circuit evaluation.
+
+```y9
+bool valid = (x > 0) && (x < 100);
+bool check = isReady || !hasFailed;
+```
+
+For example, the right-hand side of `||` is not evaluated when the left-hand side is already `true`.
+
+```y9
+if (a || (1 / 0 == 0)) do
+{
+    display.show("Short-circuit works!");
+}
+```
+
+---
+
 ## Compound Assignment
 
 Supported operators:
@@ -180,14 +325,14 @@ Supported operators:
 * `*=`
 * `/=`
 
-Numeric types (`num`, `float`, `deci`) support all four.
+Numeric types (`int`, `float`, `deci`) support all four.
 
 Strings support `+=` for concatenation.
 
-Compound assignment requires the variable to be mutable.
+Compound assignment requires the target variable to be mutable.
 
 ```y9
-mut num x = 10;
+change int x = 10;
 
 x += 5;
 x -= 3;
@@ -198,7 +343,7 @@ x /= 2;
 String example:
 
 ```y9
-mut string s = "Hello";
+change string s = "Hello";
 s += " World";
 ```
 
@@ -221,7 +366,7 @@ Comparisons work across numeric types using numeric widening.
 
 Strings and chars support lexicographic comparison.
 
-Bools support equality comparisons only.
+Bools support equality comparisons (`==`, `!=`) only.
 
 ```y9
 bool b1 = 5 < 10;
@@ -229,7 +374,7 @@ bool b2 = "abc" == "abc";
 bool b3 = true != false;
 ```
 
-Arithmetic is evaluated before comparisons.
+Arithmetic and logical precedence rules apply as standard.
 
 ---
 
@@ -252,7 +397,7 @@ else do
 }
 ```
 
-The condition must evaluate to `bool`. Invalid condition types produce a runtime error.
+The condition must evaluate to `bool`.
 
 Both block and single-statement forms are supported.
 
@@ -345,14 +490,14 @@ A `step` of `0` causes a runtime error.
 
 Start, end, and step can be numeric expressions. They are evaluated once when the loop starts.
 
-The range variable is automatically a `num`, is scoped to the loop, and cannot be reassigned inside the loop.
+The range variable is automatically an `int`, is scoped to the loop, and cannot be reassigned inside the loop.
 
 ---
 
 ### for — C-Style
 
 ```y9
-for (mut num i = 0; i < 10; i += 1) do
+for (change int i = 0; i < 10; i += 1) do
 {
     display.show(i);
 }
@@ -367,7 +512,7 @@ initialization ; condition ; update
 The initialization can declare a variable:
 
 ```y9
-for (mut num i = 0; i < 10; i += 1) do
+for (change int i = 0; i < 10; i += 1) do
 {
     display.show(i);
 }
@@ -376,7 +521,7 @@ for (mut num i = 0; i < 10; i += 1) do
 Or use an existing variable:
 
 ```y9
-mut num i = 0;
+change int i = 0;
 
 for (i = 0; i < 10; i += 1) do
 {
@@ -467,17 +612,26 @@ for i in 0..10 do
 
 ## Return
 
-`return expr;` immediately exits `main()` with the given integer-compatible value.
+`return expr;` immediately exits a function with the evaluated expression result.
 
-The expression can be any expression that produces an integer-compatible `num`.
+`entry main()` must return an integer-compatible `int`.
 
 ```y9
 return 0;
 return x + 2;
-return a * b;
 ```
 
-`return` works inside nested blocks and loops.
+Void functions can use `return;` without an expression or omit `return` at the end of the function body.
+
+```y9
+fn sayHello()
+{
+    display.show("Hello");
+    return;
+}
+```
+
+Return statements work inside nested blocks and loops.
 
 ---
 
@@ -491,6 +645,8 @@ Loop variables declared by `for` are scoped to the loop.
 
 A variable declared outside a loop remains accessible after the loop.
 
+Function parameters and local variables are scoped to their function.
+
 ---
 
 ## Full Example
@@ -498,33 +654,33 @@ A variable declared outside a loop remains accessible after the loop.
 ```y9
 @bring /io.standard/
 
+fn isEven(int val) -> bool
+{
+    return (val / 2 * 2) == val;
+}
+
+fn filterEvens(int[] nums) -> int[]
+{
+    change int[] evens = [];
+
+    for (change int i = 0; i < nums.length; i += 1) do
+    {
+        if (isEven(nums[i]) && nums[i] > 0) do
+        {
+            evens.push(nums[i]);
+        }
+    }
+
+    return evens;
+}
+
 entry main()
 {
-    mut num counter = 0;
+    int[] numbers = [1, 2, 3, 4, 5, 6, 7, 8];
+    int[] evensOnly = filterEvens(numbers);
 
-    while (counter < 3) do
-    {
-        display.show(counter);
-        counter += 1;
-    }
-
-    for i in 0..5 step 2 do
-    {
-        if (i == 4) do
-            break;
-
-        display.show(i);
-    }
-
-    for (mut num j = 0; j < 3; j += 1) do
-    {
-        if (j == 1) do
-            next;
-
-        display.show(j);
-    }
-
-    display.show("Done");
+    display.show("Filtered evens:");
+    display.show(evensOnly);
 
     return 0;
 }
@@ -533,12 +689,8 @@ entry main()
 Output:
 
 ```text
-0
-1
-2
-0
-2
-0
-2
-Done
+Filtered evens:
+[2, 4, 6, 8]
 ```
+
+---
