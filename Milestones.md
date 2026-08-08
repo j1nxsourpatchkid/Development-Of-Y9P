@@ -42,7 +42,7 @@
 * ❌ Compiler tooling
 * ❌ Plugin system
 * ❌ Package manager
-* ❌ Calculator
+* ✅ Calculator
 
 ## Major Milestones
 
