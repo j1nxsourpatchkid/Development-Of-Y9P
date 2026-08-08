@@ -6,8 +6,8 @@ Everything Y9+ can do as of the current implementation.
 
 ## Program Structure
 
-- Every program requires an `entry main()` function.
-- `@bring` imports are parsed but not enforced (decorative only).
+* Every program requires an `entry main()` function.
+* `@bring` imports are parsed but not enforced (decorative only).
 
 ```y9
 entry main()
@@ -15,103 +15,229 @@ entry main()
     // code here
     return 0;
 }
-Output
-display.show(expr) prints a value (literal, variable, or expression result).
+```
 
-y9
+---
+
+## Output
+
+`display.show(expr)` prints a value. It accepts literals, variables, and expressions.
+
+```y9
 display.show("Hello");
 display.show(42);
 display.show(x + 1);
-Input
-Expression form – returns a value (prompt is optional):
+```
 
-y9
+---
+
+## Input
+
+### Expression Form
+
+Returns a value. A prompt is optional.
+
+```y9
 string name = input.read();
 num age = input.read("Enter your age: ");
-Statement form – writes directly into a mutable variable (prompt is optional):
+```
 
-y9
+### Statement Form
+
+Writes directly into an existing mutable variable. A prompt is optional.
+
+```y9
 mut num x = 0;
 input.read(x);
 input.read("Enter value: ", x);
-Supported input types: num, float, deci, bool, chr, string.
+```
+
+Supported input types:
+
+* `num`
+* `float`
+* `deci`
+* `bool`
+* `chr`
+* `string`
+
 Invalid input causes a runtime error.
-When no expected type is available, input defaults to string.
 
-Variables
-Six types: num (integer), float, deci, bool, chr, string
+When no expected type is available, `input.read()` defaults to `string`.
 
-Type must be explicitly declared.
+---
 
-Immutable by default – use mut to allow reassignment.
+## Variables
+
+Six types are supported:
+
+* `num` — integer
+* `float`
+* `deci`
+* `bool`
+* `chr`
+* `string`
+
+Types must be explicitly declared.
+
+Variables are immutable by default. Use `mut` to allow reassignment.
 
 Type checking is enforced at runtime.
 
-y9
-num x = 10;          // immutable
-mut float y = 3.14;  // mutable
+```y9
+num x = 10;
+mut float y = 3.14;
 bool flag = true;
 string s = "hello";
 chr c = 'A';
-Comments
-// for single-line comments.
+```
 
-/// is recognised but has no special behaviour yet.
+---
 
-Arithmetic
-Basic operators: +, -, *, / between numbers.
-Precedence: multiplication/division before addition/subtraction.
-Type widening: num → float → deci when mixing types.
+## Comments
 
-y9
-num a = 5 + 3 * 2;   // 11
-float b = 10 / 3.0;  // 3.333...
-Unary negation:
+```y9
+// Single-line comment
+```
 
-y9
+`///` documentation comments are recognized but currently have no special behavior.
+
+---
+
+## Arithmetic
+
+Basic operators:
+
+* `+`
+* `-`
+* `*`
+* `/`
+
+Multiplication and division have higher precedence than addition and subtraction.
+
+Numeric type widening:
+
+```text
+num → float → deci
+```
+
+when mixing numeric types.
+
+```y9
+num a = 5 + 3 * 2;
+float b = 10 / 3.0;
+```
+
+Unary negation works on literals and variables.
+
+```y9
 num c = -5;
 num d = -x;
-String operators:
+```
 
-+ concatenation: "Hello" + " World" → "Hello World"
+### String Operators
 
-- removes all occurrences: "banana" - "a" → "bnn"
+`+` concatenates strings:
 
-* repetition with a number: "ab" * 3 → "ababab"
+```y9
+string a = "Hello" + " World";
+```
 
-Division by zero throws a runtime error.
+`-` removes all occurrences of a substring:
 
-Compound Assignment
-+=, -=, *=, /= work on num, float, deci.
+```y9
+string a = "banana" - "a";
+```
 
-+= also works on string (concatenation).
+Result:
 
-Requires the variable to be mut.
+```text
+bnn
+```
 
-y9
+`*` repeats a string by a number:
+
+```y9
+string a = "ab" * 3;
+```
+
+Result:
+
+```text
+ababab
+```
+
+Division by zero causes a runtime error.
+
+---
+
+## Compound Assignment
+
+Supported operators:
+
+* `+=`
+* `-=`
+* `*=`
+* `/=`
+
+Numeric types (`num`, `float`, `deci`) support all four.
+
+Strings support `+=` for concatenation.
+
+Compound assignment requires the variable to be mutable.
+
+```y9
 mut num x = 10;
-x += 5;   // 15
-x -= 3;   // 12
-x *= 2;   // 24
 
+x += 5;
+x -= 3;
+x *= 2;
+x /= 2;
+```
+
+String example:
+
+```y9
 mut string s = "Hello";
-s += " World";  // "Hello World"
-Comparisons
-Operators: ==, !=, <, >, <=, >=
+s += " World";
+```
 
-Produce a bool.
+---
 
-Work across numeric types (with widening), strings/chars (lexicographic), and bools (equality only).
+## Comparisons
 
-y9
-bool b1 = 5 < 10;       // true
-bool b2 = "abc" == "abc"; // true
-bool b3 = true != false;  // true
-Arithmetic evaluates before comparisons.
+Supported operators:
 
-Control Flow
-if / elif / else
-y9
+* `==`
+* `!=`
+* `<`
+* `>`
+* `<=`
+* `>=`
+
+All comparisons produce a `bool`.
+
+Comparisons work across numeric types using numeric widening.
+
+Strings and chars support lexicographic comparison.
+
+Bools support equality comparisons only.
+
+```y9
+bool b1 = 5 < 10;
+bool b2 = "abc" == "abc";
+bool b3 = true != false;
+```
+
+Arithmetic is evaluated before comparisons.
+
+---
+
+## Control Flow
+
+### if / elif / else
+
+```y9
 if (condition) do
 {
     // block
@@ -124,93 +250,258 @@ else do
 {
     // block
 }
-Condition must evaluate to bool; runtime error otherwise.
+```
 
-Both single‑statement (no braces) and block forms are allowed.
+The condition must evaluate to `bool`. Invalid condition types produce a runtime error.
 
-y9
-if (x > 5) display.show("big");
-elif (x > 0) display.show("small");
-else display.show("zero");
-Loops
-while
-y9
+Both block and single-statement forms are supported.
+
+Single statement:
+
+```y9
+if (x > 5) do
+    display.show("big");
+```
+
+Block:
+
+```y9
+if (x > 5) do
+{
+    display.show("big");
+    display.show(x);
+}
+```
+
+The same body rule applies to `if`, `elif`, `else`, `while`, and `for`:
+
+* Multiple statements require `{ }`.
+* Exactly one statement may omit `{ }` after `do`.
+
+---
+
+## Loops
+
+### while
+
+```y9
 while (condition) do
 {
     // body
 }
-Repeats while condition is true.
+```
 
-Supports single‑statement form without braces.
+Repeats while the condition evaluates to `true`.
 
-for (range-based)
-y9
-for variable in startExpr..endExpr do
+Single-statement bodies are also supported:
+
+```y9
+while (x < 5) do
+    display.show(x);
+```
+
+The condition must evaluate to `bool`.
+
+---
+
+### for — Range-Based
+
+```y9
+for i in 0..10 do
 {
-    // body
+    display.show(i);
 }
-End is exclusive.
+```
 
-Optional step clause: for i in 0..10 step 2 do
+The end value is exclusive.
 
-Loop variable is automatically num, scoped to loop body, immutable.
+This iterates over:
 
-Start, end, and step can be expressions, evaluated once at loop start.
+```text
+0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+```
 
-for (C‑style)
-y9
-for (init; condition; update) do
+An optional `step` is supported:
+
+```y9
+for i in 0..10 step 2 do
 {
-    // body
+    display.show(i);
 }
-init can be a variable declaration (mut num i = 0) or assignment (i = 0).
+```
 
-update supports =, +=, -=, *=, /= on a mutable variable.
+Negative steps are supported:
 
-Condition must be bool.
+```y9
+for i in 10..0 step -1 do
+{
+    display.show(i);
+}
+```
 
-Variable declared in init is scoped to the loop body; if a variable is reused, it must already exist.
+If `step` is omitted, it defaults to `1`.
 
-Loop Control
-break
-y9
+A `step` of `0` causes a runtime error.
+
+Start, end, and step can be numeric expressions. They are evaluated once when the loop starts.
+
+The range variable is automatically a `num`, is scoped to the loop, and cannot be reassigned inside the loop.
+
+---
+
+### for — C-Style
+
+```y9
+for (mut num i = 0; i < 10; i += 1) do
+{
+    display.show(i);
+}
+```
+
+The three sections are:
+
+```text
+initialization ; condition ; update
+```
+
+The initialization can declare a variable:
+
+```y9
+for (mut num i = 0; i < 10; i += 1) do
+{
+    display.show(i);
+}
+```
+
+Or use an existing variable:
+
+```y9
+mut num i = 0;
+
+for (i = 0; i < 10; i += 1) do
+{
+    display.show(i);
+}
+```
+
+The update supports:
+
+* `=`
+* `+=`
+* `-=`
+* `*=`
+* `/=`
+
+The update target must be mutable.
+
+The condition must evaluate to `bool`.
+
+A variable declared in the `for` initializer is scoped to the loop.
+
+---
+
+## Loop Control
+
+### break
+
+```y9
 break;
-Immediately exits the innermost enclosing loop.
+```
 
-Only valid inside a loop (parse‑time error otherwise).
+Immediately exits the nearest enclosing loop.
 
-next
-y9
+`break` is valid inside:
+
+* `while`
+* range-based `for`
+* C-style `for`
+* nested control-flow blocks inside loops
+
+Using `break` outside a loop produces a parse-time error.
+
+Example:
+
+```y9
+for i in 0..10 do
+{
+    if (i == 5) do
+        break;
+
+    display.show(i);
+}
+```
+
+---
+
+### next
+
+```y9
 next;
-Skips the remainder of the current iteration, proceeds to next iteration.
+```
 
-In C‑style for, the update expression still executes before the next condition check.
+Skips the remainder of the current iteration and proceeds to the next iteration.
 
-Only valid inside a loop (parse‑time error otherwise).
+`next` is valid inside:
 
-return
-return expr; immediately exits main() with the given integer value.
+* `while`
+* range-based `for`
+* C-style `for`
 
-expr can be any expression producing an integer‑compatible num.
+For C-style `for` loops, the update expression still executes before the next condition check.
 
-Works anywhere, including inside loops and nested blocks.
+Using `next` outside a loop produces a parse-time error.
 
-y9
+Example:
+
+```y9
+for i in 0..10 do
+{
+    if (i == 5) do
+        next;
+
+    display.show(i);
+}
+```
+
+---
+
+## Return
+
+`return expr;` immediately exits `main()` with the given integer-compatible value.
+
+The expression can be any expression that produces an integer-compatible `num`.
+
+```y9
 return 0;
 return x + 2;
 return a * b;
-Scoping
-Lexical block scoping: variables declared inside {} are not visible outside.
+```
 
-Loop variables declared in for are scoped to the loop body.
+`return` works inside nested blocks and loops.
 
-Full Example
-y9
+---
+
+## Scoping
+
+Y9+ uses lexical block scoping.
+
+Variables declared inside `{ }` are not visible outside that block.
+
+Loop variables declared by `for` are scoped to the loop.
+
+A variable declared outside a loop remains accessible after the loop.
+
+---
+
+## Full Example
+
+```y9
 @bring /io.standard/
 
 entry main()
 {
     mut num counter = 0;
+
     while (counter < 3) do
     {
         display.show(counter);
@@ -221,6 +512,7 @@ entry main()
     {
         if (i == 4) do
             break;
+
         display.show(i);
     }
 
@@ -228,15 +520,19 @@ entry main()
     {
         if (j == 1) do
             next;
+
         display.show(j);
     }
 
     display.show("Done");
+
     return 0;
 }
+```
+
 Output:
 
-text
+```text
 0
 1
 2
@@ -245,3 +541,4 @@ text
 0
 2
 Done
+```
