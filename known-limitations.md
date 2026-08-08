@@ -3,13 +3,6 @@
 This is an honest list of what Y9+ does not support yet. If something isn't
 listed here or in the syntax docs, assume it doesn't exist yet.
 
-## No control flow
-
-There is no `if`, `else`, or any form of loop (`while`, `for`, etc.).
-
-Comparisons now produce real boolean values, so the expression system is ready
-for control flow, but control-flow statements themselves are not implemented yet.
-
 ## No user-defined functions
 
 Only `entry main()` exists. You cannot declare your own functions yet.
