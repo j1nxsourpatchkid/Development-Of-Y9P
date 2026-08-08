@@ -90,6 +90,17 @@ Unary negation works on both literals and variables (`-5`, `-x`).
 
 `==`, `!=`, `<`, `>`, `<=`, `>=` all produce a `bool`.
 
+## Control flow
+
+`if`, `elif`, and `else` are supported.
+
+Conditions use parentheses and must evaluate to `bool`.
+
+Both single-statement and block forms are supported:
+
+```y9
+if (age >= 18) display.show("Adult");
+
 Works across numeric types (with widening), strings and chars
 (lexicographic ordering), and bools (equality only, no ordering).
 
