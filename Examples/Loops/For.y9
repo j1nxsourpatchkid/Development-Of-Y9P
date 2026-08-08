@@ -1,0 +1,34 @@
+entry main()
+{
+    for i in 0..5 do
+    {
+        display.show(i);
+    }
+
+    display.show("---");
+
+    for i in 0..10 step 3 do
+    {
+        if (i == 6) do
+            break;
+        display.show(i);
+    }
+
+    display.show("---");
+
+    for (mut num j = 0; j < 4; j += 1) do
+    {
+        if (j == 2) do
+            next;
+        display.show(j);
+    }
+
+    display.show("---");
+
+    for (mut num k = 0; k < 3; k += 1) do
+    {
+        display.show(k);
+    }
+
+    return 0;
+}
