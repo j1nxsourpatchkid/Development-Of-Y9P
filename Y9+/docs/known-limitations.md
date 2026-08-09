@@ -3,13 +3,6 @@
 This is an honest list of what Y9+ does not support yet. If something isn't
 listed here or in the syntax docs, assume it doesn't exist yet.
 
-## @bring does nothing
-
-`@bring /io.standard/` is parsed and stored, but it is never checked or
-enforced. Removing it currently has no effect on whether the program runs.
-
-Standard library files cannot currently be imported or dynamically loaded.
-
 ## Documentation comments are not yet functional
 
 `///` is recognized and parsed the same as `//`, but there is no
@@ -17,73 +10,40 @@ documentation-generation tool or special handling for `///` comments yet.
 
 They are purely decorative right now, identical to a regular `//` comment.
 
-## Built-in APIs are limited
+## Built-in APIs are still limited
 
-The only built-in APIs currently available are:
+Y9+ now has standard library support through `@bring`, including math, IO,
+and file-system functionality.
 
-* `display.show()`
-* `input.read()`
+However, many system-level APIs are not implemented yet.
 
-There are currently no built-in math utilities such as `abs()`, `sqrt()`,
-`pow()`, `floor()`, `ceil()`, `min()`, or `max()`.
+There is currently no built-in support for:
 
-There are also no built-in string utility methods such as `split()`, `trim()`,
-`substring()`, `indexOf()`, or case-conversion functions.
+* Networking
+* HTTP
+* WebSockets
+* Environment variables
+* Time/date APIs
+* Process management
+* Operating-system APIs
+* Hardware/sensor APIs
+* Serial communication
+* GPU computing
 
-File system access, networking, environment variables, time/date utilities,
-and process-control APIs are not currently implemented.
+## No first-class functions
 
-## No custom data types
+Functions cannot currently be:
 
-Y9+ currently supports the primitive types:
+* passed as arguments
+* assigned to variables
+* returned from other functions
 
-* `int`
-* `float`
-* `deci`
-* `bool`
-* `chr`
-* `string`
+Lambda functions, arrow functions, and closures are not implemented yet.
 
-Arrays are also supported.
-
-Custom types such as structs, classes, interfaces, enums, tuples, unions,
-and type aliases are not implemented yet.
-
-## No global variables
-
-Variables must be declared inside functions or `entry main()`.
-
-Top-level global variables are not currently supported.
-
-## Strings have limited functionality
-
-Strings do not currently support `.length`.
-
-String indexing is also not supported. For example:
-
-```y9
-string text = "Hello";
-chr first = text[0];
-```
-
-is invalid.
-
-## Arrays have limited functionality
-
-Arrays cannot currently be compared using `==` or `!=`.
-
-Only these array methods are currently implemented:
-
-* `.push()`
-* `.pop()`
-* `.remove()`
-
-Methods such as `.map()`, `.filter()`, `.forEach()`, `.slice()`,
-`.concat()`, and `.indexOf()` are not implemented.
+This also means higher-order collection operations such as `.map()` and
+`.filter()` are not currently available.
 
 ## Missing operators
-
-The modulo operator `%` is not implemented.
 
 Increment and decrement operators (`++` and `--`) are not implemented.
 
@@ -103,59 +63,50 @@ Bitwise operators are not implemented:
 * `<<`
 * `>>`
 
-The ternary operator is also not supported:
+The following operators are already supported:
+
+* `%`
+* `%=`
+* `? :`
+
+## Struct methods / full OOP
+
+Y9+ supports user-defined `struct` types, fields, construction, property
+access, mutability, arrays of structs, and deep equality.
+
+However, methods cannot currently be declared directly inside a `struct`.
+
+Full class-based OOP features such as:
+
+* inheritance
+* interfaces
+* method overriding
+* access modifiers
+* abstract classes
+
+are not implemented yet.
+
+## Runtime diagnostics are still limited
+
+Runtime errors now include source line and column information.
+
+For example:
 
 ```text
-condition ? expr1 : expr2
+[12:5] Runtime Error: Division by zero
 ```
 
-## Functions must be declared before main
+However, Y9+ does not yet provide full runtime stack traces or advanced
+debugger information.
 
-User-defined functions (`fn`) must be declared above `entry main()`.
+## Developer tooling is not yet implemented
 
-Functions cannot currently be declared below `entry main()`, inside another
-function, or inside `entry main()`.
+Y9+ does not currently include:
 
-## No first-class functions
-
-Functions cannot currently be:
-
-* passed as arguments
-* assigned to variables
-* returned from other functions
-
-Lambda functions, arrow functions, and closures are not implemented yet.
-
-## Fixed entry main() signature
-
-`entry main()` cannot currently accept parameters or command-line arguments.
-
-The entry point must remain:
-
-```y9
-entry main()
-```
-
-## No language-level error handling
-
-Y9+ does not currently have `try` / `catch` or another language-level
-exception handling system.
-
-When a runtime error occurs, execution immediately stops and the program exits
-with code `1`.
-
-## Runtime errors have limited context
-
-Parse-time errors provide line and column information.
-
-Runtime errors provide descriptive error messages, such as for:
-
-* out-of-bounds array access
-* type mismatches
-* division by zero
-* invalid operations
-
-However, runtime errors do not currently include line numbers, column
-numbers, or stack traces.
-
-Majority if not all of these will be worked on through release: 6, and release: 7
+* VS Code extension
+* Language Server Protocol (LSP)
+* Code formatter
+* Linter
+* Documentation generator
+* Package manager
+* Dependency manager

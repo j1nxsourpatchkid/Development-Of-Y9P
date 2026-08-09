@@ -1,10 +1,12 @@
 # Y9+ Milestones
+
 [ DISCLAIMER: These will fill up quickly ]
+
 ## Libraries & Capabilities
 
-* ❌ Ability to create libraries
+* ✅ Ability to create libraries
 * ❌ Geolocator
-* ❌ Advanced mathematics library
+* ✅ Advanced mathematics library
 * ❌ Microcontroller control
 * ❌ Basic binary cross entropy system
 * ❌ Machine learning utilities
@@ -16,7 +18,7 @@
 * ❌ HTTP client
 * ❌ WebSocket support
 * ❌ Database library
-* ❌ File system library
+* ✅ File system library
 * ❌ Compression library
 * ❌ 2D graphics library
 * ❌ 3D graphics library
