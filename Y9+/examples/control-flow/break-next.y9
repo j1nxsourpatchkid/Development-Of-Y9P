@@ -1,1 +1,22 @@
-Added After stdlib
+entry main() {
+    display.show("--- Demonstrating 'next' (skipping evens) ---");
+    for i in 1..6 do {
+        if (i % 2 == 0) do {
+            next; // Skip even numbers
+        }
+        display.show("Odd number: " + i);
+    }
+
+    display.show("--- Demonstrating 'break' (stop at 4) ---");
+    change int num = 1;
+    while (true) do {
+        if (num > 3) do {
+            display.show("Reached num = " + num + ", breaking out.");
+            break; // Exit loop
+        }
+        display.show("Loop count: " + num);
+        num += 1;
+    }
+
+    return 0;
+}

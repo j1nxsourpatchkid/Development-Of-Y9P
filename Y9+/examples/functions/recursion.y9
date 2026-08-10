@@ -1,1 +1,26 @@
-Added After stdlib
+fn factorial(int n) -> int {
+    if (n <= 1) do {
+        return 1;
+    }
+    return n * factorial(n - 1);
+}
+
+fn countdown(int n) {
+    if (n <= 0) do {
+        display.show("Liftoff!");
+        return;
+    }
+    display.show("T-minus " + n);
+    countdown(n - 1);
+}
+
+entry main() {
+    display.show("--- Recursive Factorial ---");
+    int fact5 = factorial(5);
+    display.show("Factorial of 5: " + fact5);
+
+    display.show("--- Recursive Countdown ---");
+    countdown(3);
+
+    return 0;
+}

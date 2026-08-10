@@ -1,1 +1,22 @@
-Added After stdlib
+entry main() {
+    // Array declaration
+    int[] numbers = [10, 20, 30, 40, 50];
+
+    display.show("Array length: " + numbers.length);
+    display.show("First element: " + numbers[0]);
+    display.show("Third element: " + numbers[2]);
+
+    // Modifying elements in a mutable array
+    change int[] mutableList = [1, 2, 3];
+    mutableList[1] = 99;
+    display.show("Updated 2nd element: " + mutableList[1]);
+
+    // Array iteration
+    string[] languages = ["Y9", "TypeScript", "Python"];
+    display.show("--- Supported Languages ---");
+    for lang in languages do {
+        display.show("- " + lang);
+    }
+
+    return 0;
+}

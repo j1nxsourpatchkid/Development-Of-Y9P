@@ -1,1 +1,23 @@
-Added After stdlib
+entry main() {
+    int score = 85;
+
+    display.show("Evaluating score: " + score);
+
+    if (score >= 90) do {
+        display.show("Grade: A");
+    } elif (score >= 80) do {
+        display.show("Grade: B");
+    } elif (score >= 70) do {
+        display.show("Grade: C");
+    } elif (score >= 60) do {
+        display.show("Grade: D");
+    } else do {
+        display.show("Grade: F");
+    }
+
+    // Ternary operator demonstration
+    string status = (score >= 60) ? "Passed" : "Failed";
+    display.show("Status: " + status);
+
+    return 0;
+}

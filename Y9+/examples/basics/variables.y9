@@ -1,1 +1,27 @@
-Added After stdlib
+entry main() {
+    // Immutable variables (default)
+    int age = 25;
+    float height = 5.9;
+    bool isActive = true;
+    chr grade = 'A';
+    string name = "Alice";
+
+    display.show("Name: " + name);
+    display.show("Age: " + age);
+    display.show("Height: " + height);
+    display.show("Active: " + isActive);
+    display.show("Grade: " + grade);
+
+    // Mutable variables (using 'change')
+    change int score = 100;
+    display.show("Initial Score: " + score);
+
+    score += 50;
+    display.show("Updated Score: " + score);
+
+    change string greeting = "Hello";
+    greeting += ", World!";
+    display.show("Greeting: " + greeting);
+
+    return 0;
+}

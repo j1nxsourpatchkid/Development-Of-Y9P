@@ -1,1 +1,26 @@
-Added After stdlib
+entry main() {
+    display.show("--- Range For Loop (1..5) ---");
+    for i in 1..5 do {
+        display.show("Range count: " + i);
+    }
+
+    display.show("--- C-Style For Loop ---");
+    for (change int i = 0; i < 3; i += 1) do {
+        display.show("C-Style index: " + i);
+    }
+
+    display.show("--- While Loop ---");
+    change int count = 3;
+    while (count > 0) do {
+        display.show("Countdown: " + count);
+        count -= 1;
+    }
+
+    display.show("--- For-In Loop ---");
+    string[] fruits = ["Apple", "Banana", "Cherry"];
+    for fruit in fruits do {
+        display.show("Fruit: " + fruit);
+    }
+
+    return 0;
+}

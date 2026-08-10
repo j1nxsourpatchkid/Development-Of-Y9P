@@ -1,1 +1,34 @@
-Added After stdlib
+fn performOperation(float num1, float num2, string op) -> float {
+    if (op == "+") do {
+        return num1 + num2;
+    } elif (op == "-") do {
+        return num1 - num2;
+    } elif (op == "*") do {
+        return num1 * num2;
+    } elif (op == "/") do {
+        if (num2 == 0.0) do {
+            display.show("Error: Division by zero!");
+            return 0.0;
+        }
+        return num1 / num2;
+    } else do {
+        display.show("Error: Unknown operator '" + op + "'");
+        return 0.0;
+    }
+}
+
+entry main() {
+    display.show("=== Y9 Calculator ===");
+
+    string op = input.read("Enter operator (+, -, *, /): ");
+    string n1Str = input.read("Enter first number: ");
+    string n2Str = input.read("Enter second number: ");
+
+    float num1 = to_float(n1Str);
+    float num2 = to_float(n2Str);
+
+    float result = performOperation(num1, num2, op);
+    display.show("Result: " + num1 + " " + op + " " + num2 + " = " + result);
+
+    return 0;
+}

@@ -1,127 +1,175 @@
-# Release Number: 2026.08.09 - 6
+# Release Number: 2026.08.10 - 7
 
-## User-defined functions (`fn`)
+## First-Class Functions, Lambdas & Lexical Closures
 
-* Declare custom functions with `fn name(params) -> ReturnType { ... }`.
-* Return type is optional; missing `->` means a void function.
-* Parameters can be made mutable with `change`.
-* Runtime checks enforce argument counts, parameter types, and return types.
-* Functions can now be declared anywhere at file scope, including below `entry main()`.
-* Recursive function calls are supported.
+* Functions are now first-class citizens.
+* Functions can be stored in variables, passed as arguments, and returned from function calls.
+* Added anonymous lambda syntax: `fn(params) -> ReturnType { ... }`.
+* Added lexical closure scope capturing.
+* Lambdas can capture variables from their surrounding lexical scopes.
+* Added functional collection methods to arrays:
 
-## Structs
+  * `.forEach()`
+  * `.filter()`
+  * `.map()`
+  * `.reduce()`
 
-* Define custom data types using `struct`.
-* Struct fields are immutable by default.
-* Fields can be made mutable with `change`.
-* Structs can be instantiated using their type name.
-* Access struct fields using dot notation (`person.name`).
-* Mutable fields can be reassigned.
-* Structs support deep equality with `==` and `!=`.
-* Structs can be stored in arrays.
-* Arrays of structs are supported.
+## Native Map Collection Type (`map[K]V`)
 
-## Strings
+* Added native Map data structure using `map[KeyType]ValueType`.
+* Added map literals using `{ key: value }`.
+* Added map indexing using `map[key]`.
+* Added map methods:
 
-* String property `text.length` returns the number of characters.
-* String indexing (`text[0]`) returns a `chr`.
-* Strings can be iterated using `for ... in ... do`.
-* Added string methods:
+  * `.get()`
+  * `.set()`
+  * `.has()`
+  * `.remove()`
+  * `.keys()`
 
-  * `indexOf()`
-  * `substring()`
-  * `split()`
-  * `trim()`
-  * `replace()`
-  * `toUpper()`
-  * `toLower()`
-* Strings remain immutable.
+## Pattern Matching (`match`)
 
-## Arrays
+* Added `match` statements and expressions.
+* Supports direct value matching.
+* Supports wildcard matching using `case _`.
+* Supports type matching using cases such as `case int` and `case string`.
+* Supports fallback cases.
 
-* Deep array equality is now supported with `==` and `!=`.
-* Added `indexOf(value)` – returns the index of an element.
-* Added `slice(start, end)` – returns a portion of an array.
-* Added `concat(other)` – combines two arrays.
-* Existing `push()`, `pop()`, and `remove()` methods remain supported.
+## HTTP, Networking & WebSockets
 
-## Collection iteration
+* Added native HTTP client functions: `http.get()` and `http.post()`.
+* Added native HTTP server creation using `http.listen(port, handlerFn)`.
+* Added native TCP socket server support using `net.listen(port, handlerFn)`.
+* Added native WebSocket server endpoint support using `ws.server(port, handlerFn)`.
 
-* Added `for ... in ... do` iteration for arrays.
-* Added `for ... in ... do` iteration for strings.
-* Array iteration returns each element.
-* String iteration returns each character as a `chr`.
+## Multithreading & Synchronization
 
-## Mathematical operators
+* Added thread spawning using `thread.spawn(scriptPath, args)`.
+* Added thread management using `thread.join(id)` and `thread.isActive(id)`.
+* Added thread synchronization primitives:
 
-* Added modulo operator `%`.
-* Added compound modulo assignment `%=`.
+  * `sync.mutexCreate()`
+  * `sync.mutexLock(id)`
+  * `sync.mutexUnlock(id)`
 
-## Ternary operator
+## Operating System, Process & Environment APIs
 
-* Added conditional expressions using `condition ? true_expr : false_expr`.
-* Ternary expressions short-circuit evaluation.
-* Ternary precedence is below `||` and above assignment.
+* Added OS inspection methods:
 
-## Top-level global variables
+  * `os.platform()`
+  * `os.arch()`
+  * `os.hostname()`
+  * `os.tmpdir()`
+  * `os.homedir()`
+  * `os.cpus()`
+  * `os.uptime()`
+  * `os.totalMem()`
+  * `os.freeMem()`
+* Added process control methods:
 
-* Variables can now be declared at file scope outside functions and `entry main()`.
-* Globals are accessible from functions.
-* Globals are immutable by default.
-* `change` can be used for mutable globals.
-* Globals can be exported from modules.
-* Local variables can shadow global variables.
+  * `process.exec()`
+  * `process.exit()`
+  * `process.pid()`
+  * `process.cwd()`
+  * `process.chdir()`
+  * `process.args()`
+* Added environment variable manipulation:
 
-## Function hoisting
+  * `env.get()`
+  * `env.set()`
+  * `env.has()`
+  * `env.remove()`
+  * `env.all()`
+* Added time and date functionality:
 
-* Functions can now be declared above or below `entry main()`.
-* Functions must still be declared at file scope.
+  * `time.now()`
+  * `time.sleep()`
+  * `time.dateString()`
 
-## CLI arguments
+## JSON, Cryptography, Database & Compression
 
-* `entry main()` can now optionally accept a `string[] args` parameter.
-* Command-line arguments are provided as a Y9+ string array.
-* The original `entry main()` syntax remains valid.
-* Programs without an explicit return default to exit code `0`.
+* Added JSON serialization and parsing:
 
-## `@bring` modules
+  * `json.parse()`
+  * `json.stringify()`
+* Added cryptographic hashing and encoding:
 
-* `@bring` is now functional.
-* Local `.y9` files can be imported using paths such as `@bring ./helpers.y9/`.
-* Standard library modules can be imported using paths such as `@bring /std/math/`.
-* Imported modules support explicit exports.
-* Module scope is isolated.
-* Circular module dependencies are detected.
+  * `crypto.sha256()`
+  * `crypto.md5()`
+  * `crypto.base64Encode()`
+  * `crypto.base64Decode()`
+* Added file-backed key-value storage:
 
-## Standard library
+  * `db.set()`
+  * `db.get()`
+  * `db.has()`
+  * `db.delete()`
+  * `db.all()`
+  * `db.clear()`
+* Added compression:
 
-* Added `/std/math/`.
-* Added `/std/io/`.
-* Added `/std/fs/`.
-* Math functionality includes common operations such as `abs`, `sqrt`, `floor`, `ceil`, `round`, `pow`, `min`, `max`, `sin`, `cos`, and `tan`.
-* File-system functionality includes file reading, writing, and existence checks.
-* Standard library functionality builds on Y9+'s native runtime APIs.
+  * `compress.gzip()`
+  * `compress.gunzip()`
+  * `compress.deflate()`
+  * `compress.inflate()`
 
-## Language-level error handling
+## Data Analysis & Statistics
 
-* Added `try do ... catch (...) do ...`.
-* Runtime errors can now be caught without terminating the entire program.
-* The caught error is provided to the `catch` block as a `string`.
+* Added CSV parsing and stringification:
 
-## Precise runtime error locations
+  * `data.parseCsv()`
+  * `data.toCsv()`
+* Added statistical computation functions:
 
-* Runtime errors now include line and column numbers.
-* Runtime errors use the format `[line:col] Runtime Error: ...`.
-* Runtime source locations are preserved through expression and statement evaluation.
+  * `stats.sum()`
+  * `stats.mean()`
+  * `stats.median()`
+  * `stats.variance()`
+  * `stats.stdDev()`
+  * `stats.min()`
+  * `stats.max()`
 
-## Breaking changes from Release 5
+## User-Defined Exception Throwing
 
-* `@bring` is now an active module system instead of being parsed and ignored.
-* Functions may now appear below `entry main()`.
-* Top-level global variables are now supported.
-* `entry main(string[] args)` is now supported.
-* Runtime errors now include source line and column information.
-* Strings now support `.length` and indexing.
-* Arrays now support deep equality and additional methods.
-* `try / catch` is now supported.
-* Structs are now supported.
+* Added user-defined exception throwing using `throw`.
+* User code can now raise custom runtime errors.
+* Custom thrown errors can be caught using `try / catch`.
+
+## Internal Architecture & Refactoring
+
+* Modularized the type checker component into `src/checker/`.
+* Split checker functionality into:
+
+  * `context.ts`
+  * `expressions.ts`
+  * `statements.ts`
+  * `checker.ts`
+* Improved internal maintainability and separation of type-checking responsibilities.
+
+## Release 7 Summary
+
+Release 7 significantly expands Y9+ beyond its previous core language features by adding:
+
+* First-class functions
+* Lambdas
+* Lexical closures
+* Higher-order array operations
+* Native maps
+* Pattern matching
+* HTTP
+* TCP networking
+* WebSockets
+* Multithreading
+* Mutex synchronization
+* OS APIs
+* Process APIs
+* Environment variables
+* Time/date APIs
+* JSON
+* Cryptography
+* File-backed databases
+* Compression
+* CSV processing
+* Statistical utilities
+* User-defined exception throwing
+* Improved internal compiler/type-checker architecture

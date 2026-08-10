@@ -1,1 +1,49 @@
-Added After stdlib
+entry main() {
+    change int[] numbers = [1, 2, 3, 4, 5];
+
+    display.show("Initial numbers: " + numbers);
+
+    // Push & Pop
+    numbers.push(6);
+    display.show("After push(6): " + numbers);
+
+    int popped = numbers.pop();
+    display.show("Popped element: " + popped);
+
+    // IndexOf & Remove
+    int idx = numbers.indexOf(3);
+    display.show("Index of 3: " + idx);
+
+    numbers.remove(idx);
+    display.show("After removing index " + idx + ": " + numbers);
+
+    // Slice & Concat
+    int[] sliced = numbers.slice(0, 2);
+    display.show("Sliced (0..2): " + sliced);
+
+    int[] concatenated = numbers.concat([10, 20]);
+    display.show("Concatenated: " + concatenated);
+
+    // High-Order Functional Array Methods
+    int[] scores = [10, 25, 30, 45, 50];
+
+    // Filter (>20)
+    int[] highScores = scores.filter(fn(int s) -> bool {
+        return s > 20;
+    });
+    display.show("High scores (>20): " + highScores);
+
+    // Map (double values)
+    int[] doubled = scores.map(fn(int s) -> int {
+        return s * 2;
+    });
+    display.show("Doubled scores: " + doubled);
+
+    // Reduce (sum values)
+    int totalSum = scores.reduce(0, fn(int acc, int s) -> int {
+        return acc + s;
+    });
+    display.show("Total sum: " + totalSum);
+
+    return 0;
+}

@@ -1,1 +1,34 @@
-Added After stdlib
+struct TodoItem {
+    int id;
+    string task;
+    change bool completed;
+}
+
+entry main() {
+    display.show("=== Y9 Todo List Manager ===");
+
+    change TodoItem[] todos = [];
+
+    // Adding items using the auto-generated struct constructor
+    todos.push(TodoItem(1, "Learn Y9 syntax", true));
+    todos.push(TodoItem(2, "Build a project in Y9", false));
+    todos.push(TodoItem(3, "Upload examples to GitHub", false));
+
+    display.show("--- Todo Items ---");
+    for item in todos do {
+        string status = item.completed ? "[X]" : "[ ]";
+        display.show(item.id + ". " + status + " " + item.task);
+    }
+
+    // Mutating a field on a struct
+    display.show("\nMarking task #2 as completed...");
+    todos[1].completed = true;
+
+    display.show("--- Updated Todo Items ---");
+    for item in todos do {
+        string status = item.completed ? "[X]" : "[ ]";
+        display.show(item.id + ". " + status + " " + item.task);
+    }
+
+    return 0;
+}

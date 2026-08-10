@@ -10,40 +10,7 @@ documentation-generation tool or special handling for `///` comments yet.
 
 They are purely decorative right now, identical to a regular `//` comment.
 
-## Built-in APIs are still limited
-
-Y9+ now has standard library support through `@bring`, including math, IO,
-and file-system functionality.
-
-However, many system-level APIs are not implemented yet.
-
-There is currently no built-in support for:
-
-* Networking
-* HTTP
-* WebSockets
-* Environment variables
-* Time/date APIs
-* Process management
-* Operating-system APIs
-* Hardware/sensor APIs
-* Serial communication
-* GPU computing
-
-## No first-class functions
-
-Functions cannot currently be:
-
-* passed as arguments
-* assigned to variables
-* returned from other functions
-
-Lambda functions, arrow functions, and closures are not implemented yet.
-
-This also means higher-order collection operations such as `.map()` and
-`.filter()` are not currently available.
-
-## Missing operators
+## Missing Operators
 
 Increment and decrement operators (`++` and `--`) are not implemented.
 
@@ -69,12 +36,13 @@ The following operators are already supported:
 * `%=`
 * `? :`
 
-## Struct methods / full OOP
+## Struct Methods / Full OOP
 
 Y9+ supports user-defined `struct` types, fields, construction, property
 access, mutability, arrays of structs, and deep equality.
 
-However, methods cannot currently be declared directly inside a `struct`.
+However, methods cannot currently be declared directly inside a `struct`
+definition.
 
 Full class-based OOP features such as:
 
@@ -86,9 +54,49 @@ Full class-based OOP features such as:
 
 are not implemented yet.
 
-## Runtime diagnostics are still limited
+## User-Defined Exception Throwing
 
-Runtime errors now include source line and column information.
+Y9+ supports `try / catch (string err) do ...` blocks to handle runtime
+errors.
+
+However, user code cannot yet throw custom exceptions (for example,
+`throw "error"`).
+
+`try / catch` currently catches system and native runtime errors.
+
+## Documentation Generation
+
+Y9+ supports documentation comments using `///`, but there is currently no
+documentation-generation tool that converts these comments into generated
+API documentation.
+
+## Remaining System-Level APIs
+
+Y9+ now provides a substantially developed standard library through `@bring`,
+including functionality for mathematics, IO, filesystems, networking, HTTP,
+cryptography, machine learning utilities, neural networks, and other
+higher-level capabilities.
+
+The standard library test suite is currently passing completely.
+
+However, some lower-level system and hardware functionality is still not
+implemented, including:
+
+* Environment variables
+* Advanced time/date APIs
+* Process management
+* Operating-system APIs
+* Hardware and sensor APIs
+* Serial communication
+* Microcontroller control
+* GPU computing
+* Image processing
+* Audio processing
+* Geolocation
+
+## Runtime Diagnostics Are Still Limited
+
+Runtime errors include source line and column information.
 
 For example:
 
@@ -99,7 +107,10 @@ For example:
 However, Y9+ does not yet provide full runtime stack traces or advanced
 debugger information.
 
-## Developer tooling is not yet implemented
+## Developer Tooling Is Not Yet Fully Implemented
+
+Y9+ includes development tooling and a full IDE, but several ecosystem and
+editor integrations are still missing.
 
 Y9+ does not currently include:
 

@@ -1,1 +1,14 @@
-Added After stdlib
+entry main() {
+    display.show("=== User Interaction Demo ===");
+
+    // Prompting for input using input.read
+    string userName = input.read("Enter your name: ");
+    string ageInput = input.read("Enter your age: ");
+
+    int age = to_int(ageInput);
+
+    display.show("Hello, " + userName + "!");
+    display.show("Next year you will be " + (age + 1) + " years old.");
+
+    return 0;
+}

@@ -1,1 +1,4 @@
-Added After stdlib
+entry main() {
+    display.show("Hello, World!");
+    return 0;
+}

@@ -1,1 +1,26 @@
-Added After stdlib
+fn fibRecursive(int n) -> int {
+    if (n <= 0) do { return 0; }
+    if (n == 1) do { return 1; }
+    return fibRecursive(n - 1) + fibRecursive(n - 2);
+}
+
+fn printFibonacciSequence(int terms) {
+    change int a = 0;
+    change int b = 1;
+
+    display.show("Iterative Fibonacci (" + terms + " terms):");
+    for i in 0..terms do {
+        display.show("Term " + i + ": " + a);
+        int nextVal = a + b;
+        a = b;
+        b = nextVal;
+    }
+}
+
+entry main() {
+    printFibonacciSequence(8);
+
+    display.show("Recursive check: Fib(7) = " + fibRecursive(7));
+
+    return 0;
+}
