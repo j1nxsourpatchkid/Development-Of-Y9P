@@ -1,21 +1,24 @@
 # Y9+ Language Features
 
-Everything Y9+ can do as of Release 7.
+Everything Y9+ can do as of Release 8.
 
 ---
 
 ## Program Structure
 
-* Every program requires an `entry main()` function.
-* `entry main()` can take no arguments or accept command-line arguments as a `string[] args`.
-* Returning an exit code (e.g. `return 0;`) is optional in `entry main()`.
-* If `entry main()` finishes without reaching a return statement, execution automatically returns `0`.
-* User-defined functions (`fn`) are declared at file scope.
-* Functions may be declared above or below `entry main()`.
+* Every program requires an entry main() function.
+* entry main() can take no arguments or accept command-line arguments as a string[] args.
+* Returning an exit code (e.g. return 0;) is optional in entry main().
+* If entry main() finishes without reaching a return statement, execution automatically returns 0.
+* User-defined functions (fn) are declared at file scope.
+* Functions may be declared above or below entry main().
 * Struct declarations may appear at the top level.
+* Struct declarations support generic type parameters (e.g. struct Box<T>).
+* Enum declarations may appear at the top level.
+* Enum declarations support generic type parameters (e.g. enum Option<T>).
 * Global variable declarations may appear at the top level.
-* `export` can be used on top-level functions, structs, and global variables.
-* `@bring` imports can import standard library modules or source files.
+* export can be used on top-level functions, structs, enums, and global variables.
+* @bring imports can import standard library modules or source files.
 
 ```y9
 fn add(int a, int b) -> int
@@ -30,7 +33,7 @@ entry main()
 }
 ```
 
-`entry main()` may also receive command-line arguments:
+entry main() may also receive command-line arguments:
 
 ```y9
 entry main(string[] args)
@@ -48,9 +51,7 @@ entry main(string[] args)
 
 ## Modules & Imports
 
-Y9+ uses `@bring` to import modules.
-
-Standard library modules can be imported using a standard library path:
+Y9+ uses @bring to import modules. Standard library modules can be imported using a standard library path:
 
 ```y9
 @bring /std/math;
@@ -66,7 +67,7 @@ Source files can also be imported using a relative path:
 
 Circular module dependencies are detected and reported as import errors.
 
-Top-level declarations can be exported using `export`:
+Top-level declarations can be exported using export:
 
 ```y9
 export fn add(int a, int b) -> int
@@ -75,7 +76,7 @@ export fn add(int a, int b) -> int
 }
 ```
 
-Structs and global variables can also be exported:
+Structs, enums, and global variables can also be exported:
 
 ```y9
 export struct Player
@@ -84,7 +85,34 @@ export struct Player
     change int score;
 }
 
+export enum Status
+{
+    Pending,
+    Active,
+    Failed(string reason)
+}
+
 export change int callCount = 0;
+```
+
+Exported generic structs, enums, and functions retain their type-parameter information when imported:
+
+```y9
+export struct Container<T>
+{
+    T item;
+}
+
+export enum Event<T>
+{
+    Message(T data),
+    Close
+}
+
+export fn wrap<T>(T val) -> Container<T>
+{
+    return Container(val);
+}
 ```
 
 Members exported by an imported module can be accessed using the module filename as a namespace:
@@ -99,11 +127,23 @@ entry main()
 }
 ```
 
+Namespacing also works for generic imports:
+
+```y9
+@bring "./containers.y9";
+
+entry main()
+{
+    containers.Container<int> c = containers.wrap(10);
+    display.show(c.item);
+}
+```
+
 ---
 
 ## Output
 
-`display.show(expr)` prints a value. It accepts literals, variables, expressions, arrays, maps, and structs.
+display.show(expr) prints a value. It accepts literals, variables, expressions, arrays, maps, and structs.
 
 ```y9
 display.show("Hello");
@@ -137,36 +177,28 @@ input.read("Enter value: ", x);
 ```
 
 Supported input types:
+* int
+* float
+* deci
+* bool
+* chr
+* string
 
-* `int`
-* `float`
-* `deci`
-* `bool`
-* `chr`
-* `string`
-
-Invalid input causes a runtime error.
-
-When no expected type is available, `input.read()` defaults to `string`.
+Invalid input causes a runtime error. When no expected type is available, input.read() defaults to string.
 
 ---
 
 ## Variables
 
 Six primitive types are supported:
+* int — integer
+* float
+* deci
+* bool
+* chr
+* string
 
-* `int` — integer
-* `float`
-* `deci`
-* `bool`
-* `chr`
-* `string`
-
-Types must be explicitly declared unless a value is being stored in an `auto` variable.
-
-Variables are immutable by default. Use `change` to allow reassignment.
-
-Type checking is enforced at runtime.
+Types must be explicitly declared unless a value is being stored in an auto variable. Variables are immutable by default. Use change to allow reassignment. Type checking is enforced at runtime.
 
 ```y9
 int x = 10;
@@ -176,7 +208,7 @@ string s = "hello";
 chr c = 'A';
 ```
 
-`auto` can be used when the type is inferred from the assigned value.
+auto can be used when the type is inferred from the assigned value.
 
 ```y9
 auto number = 42;
@@ -189,7 +221,7 @@ Global variables may also be declared at the top level:
 change int callCount = 0;
 ```
 
-Top-level global variables can be exported from modules using `export`.
+Top-level global variables can be exported from modules using export.
 
 ---
 
@@ -199,7 +231,7 @@ Structs are user-defined composite data types with named fields.
 
 ### Declaration
 
-Fields are immutable by default. Use `change` to make a field mutable.
+Fields are immutable by default. Use change to make a field mutable.
 
 ```y9
 struct Player
@@ -237,7 +269,7 @@ Attempting to modify an immutable field produces a runtime error.
 
 ### Structural Comparison
 
-Struct instances support deep equality comparison with `==` and `!=`.
+Struct instances support deep equality comparison with == and !=.
 
 ```y9
 Player p1 = Player("Alice", 100, 100.0);
@@ -246,7 +278,93 @@ Player p2 = Player("Alice", 100, 100.0);
 bool identical = p1 == p2;
 ```
 
-Structs can be exported from modules using `export`.
+Structs can be exported from modules using export.
+
+### Generic Structs
+
+Struct declarations accept one or more type parameters enclosed in <...>:
+
+```y9
+struct Box<T>
+{
+    T value;
+}
+
+struct Pair<T, U>
+{
+    T first;
+    U second;
+}
+```
+
+Instantiation automatically infers or validates field types:
+
+```y9
+Box<int> intBox = Box(100);
+Pair<string, int> user = Pair("Alice", 25);
+
+int val = intBox.value;
+string name = user.first;
+```
+
+Generic types can be nested arbitrarily:
+
+```y9
+Box<Box<int>> nested = Box(Box(42));
+int value = nested.value.value;
+```
+
+The type checker enforces generic arity and prevents cross-assignment between differing instantiations (e.g. Box<int> cannot be assigned to a Box<string> variable).
+
+---
+
+## Enums & Algebraic Data Types (ADTs)
+
+Y9+ supports tagged unions / algebraic data types via enum.
+
+### Declaration
+
+Variants can be unit variants or carry typed payload fields:
+
+```y9
+enum Status
+{
+    Pending,
+    Active,
+    Failed(string reason)
+}
+```
+
+### Generic Enums
+
+Enums support parametric type parameters, enabling standard functional types like Option<T> and Result<T, E>:
+
+```y9
+enum Option<T>
+{
+    Some(T value),
+    None
+}
+
+enum Result<T, E>
+{
+    Ok(T value),
+    Err(E error)
+}
+```
+
+### Instantiation
+
+Variants are constructed using dot notation on the enum name, either with an inferred or explicit type argument:
+
+```y9
+Option<int> opt = Option.Some(42);
+Option<int> empty = Option.None;
+
+Result<string, int> res = Result.Ok("Success");
+```
+
+Enums can be exported from modules using export, and retain their generic type information across @bring imports.
 
 ---
 
@@ -256,9 +374,7 @@ Arrays are ordered, dynamically sized collections of elements.
 
 ### Declaration & Literals
 
-Array types are declared using `type[]`.
-
-Array literals use square brackets.
+Array types are declared using type[]. Array literals use square brackets.
 
 ```y9
 int[] numbers = [1, 2, 3, 4, 5];
@@ -266,9 +382,7 @@ change string[] names = ["Alice", "Bob"];
 change int[] emptyList = [];
 ```
 
-Numeric elements inside array literals are automatically widened when types are mixed.
-
-For example, `[1, 2.5]` produces a `float[]`.
+Numeric elements inside array literals are automatically widened when types are mixed. For example, [1, 2.5] produces a float[].
 
 ### Indexing & Assignment
 
@@ -284,7 +398,7 @@ Accessing an out-of-bounds index produces a runtime error.
 
 ### Array Property
 
-`.length` returns the number of elements in the array as an `int`.
+.length returns the number of elements in the array as an int.
 
 ```y9
 int len = numbers.length;
@@ -292,25 +406,16 @@ int len = numbers.length;
 
 ### Array Methods
 
-`.push(val)` appends a value to the end of the array and returns the new length.
-
-`.pop()` removes and returns the last element.
-
-`.remove(index)` removes and returns the element at the specified index.
-
-`.indexOf(val)` returns the index of a value, or `-1` when the value is not found.
-
-`.slice(start, end)` returns a sub-array from `start` up to, but not including, `end`.
-
-`.concat(other)` returns a new array containing the elements of both arrays.
-
-`.forEach(fn)` executes a function for every element.
-
-`.filter(fn)` returns a new array containing elements for which the function returns `true`.
-
-`.map(fn)` returns a new array containing the transformed elements.
-
-`.reduce(initial, fn)` reduces the array to a single value.
+.push(val) appends a value to the end of the array and returns the new length.
+.pop() removes and returns the last element.
+.remove(index) removes and returns the element at the specified index.
+.indexOf(val) returns the index of a value, or -1 when the value is not found.
+.slice(start, end) returns a sub-array from start up to, but not including, end.
+.concat(other) returns a new array containing the elements of both arrays.
+.forEach(fn) executes a function for every element.
+.filter(fn) returns a new array containing elements for which the function returns true.
+.map(fn) returns a new array containing the transformed elements.
+.reduce(initial, fn) reduces the array to a single value.
 
 ```y9
 change int[] items = [10, 20, 30];
@@ -338,7 +443,7 @@ int[] doubled = items.map(fn(int value) -> int {
 
 ### Array Deep Equality
 
-Arrays support deep structural comparison using `==` and `!=`.
+Arrays support deep structural comparison using == and !=.
 
 ```y9
 bool same = ([1, 2, 3] == [1, 2, 3]);
@@ -348,7 +453,7 @@ bool same = ([1, 2, 3] == [1, 2, 3]);
 
 ## Maps
 
-Maps store key-value associations using the `map[K]V` type.
+Maps store key-value associations using the map[K]V type.
 
 ### Declaration & Literals
 
@@ -369,15 +474,11 @@ int score = scores["Alice"];
 
 ### Map Methods
 
-`.get(key)` retrieves a value.
-
-`.set(key, value)` inserts or updates a value.
-
-`.has(key)` checks whether a key exists.
-
-`.remove(key)` removes a key-value pair.
-
-`.keys()` returns the map's keys as an array.
+.get(key) retrieves a value.
+.set(key, value) inserts or updates a value.
+.has(key) checks whether a key exists.
+.remove(key) removes a key-value pair.
+.keys() returns the map's keys as an array.
 
 ```y9
 map[string]string user = {
@@ -399,7 +500,7 @@ user.remove("role");
 
 ## Functions
 
-Custom functions are declared using `fn`.
+Custom functions are declared using fn.
 
 ### Syntax
 
@@ -410,9 +511,7 @@ fn doubleValue(int n) -> int
 }
 ```
 
-Functions may accept zero or more parameters.
-
-Parameters are immutable by default. Use `change` before a parameter type to make it mutable within the function.
+Functions may accept zero or more parameters. Parameters are immutable by default. Use change before a parameter type to make it mutable within the function.
 
 ```y9
 fn increment(change int val) -> int
@@ -422,9 +521,7 @@ fn increment(change int val) -> int
 }
 ```
 
-Return type annotations use `-> Type`.
-
-Functions that omit `-> Type` are treated as void functions.
+Return type annotations use -> Type. Functions that omit -> Type are treated as void functions.
 
 ```y9
 fn sayHello()
@@ -433,15 +530,46 @@ fn sayHello()
 }
 ```
 
-Functions can be called from `entry main()` or from other functions.
+Functions can be called from entry main() or from other functions.
 
 ```y9
 int result = doubleValue(5);
 ```
 
-Functions support recursion.
+Functions support recursion. Functions are also first-class values.
 
-Functions are also first-class values.
+### Generic Functions
+
+Functions can declare one or more type parameters enclosed in <...>:
+
+```y9
+fn identity<T>(T value) -> T
+{
+    return value;
+}
+```
+
+Y9+ automatically infers type arguments at call sites:
+
+```y9
+int a = identity(42);
+string b = identity("hello");
+```
+
+Type arguments can also be specified explicitly:
+
+```y9
+int a = identity<int>(42);
+```
+
+Multiple type parameters are supported:
+
+```y9
+fn pair<T, U>(T first, U second) -> Pair<T, U>
+{
+    return Pair(first, second);
+}
+```
 
 ---
 
@@ -451,7 +579,7 @@ Functions can be stored in variables, passed as arguments, and returned from oth
 
 ### Anonymous Lambdas
 
-Lambdas use `fn(params) -> ReturnType { ... }` syntax.
+Lambdas use fn(params) -> ReturnType { ... } syntax.
 
 ```y9
 auto doubleVal = fn(int x) -> int
@@ -479,11 +607,30 @@ display.show(multiplier(4));
 
 Captured variables remain available to the closure after the surrounding expression or function scope has ended.
 
+### Generic Higher-Order Functions
+
+First-class functions integrate seamlessly with parametric polymorphism. Lambdas and function types can carry generic type variables, and closures correctly preserve their captured generic type environments.
+
+```y9
+fn apply<T, U>(T value, fn(T) -> U transform) -> U
+{
+    return transform(value);
+}
+
+entry main()
+{
+    string text = apply(42, fn(int n) -> string {
+        return "Number: " + n;
+    });
+    display.show(text);
+}
+```
+
 ---
 
 ## Pattern Matching
 
-Y9+ supports structural pattern matching using `match`.
+Y9+ supports structural pattern matching using match.
 
 ### Value Matching
 
@@ -509,7 +656,43 @@ match (value)
 }
 ```
 
-`case _` acts as a wildcard fallback.
+case _ acts as a wildcard fallback.
+
+### Enum Variant Destructuring
+
+match also matches enum variants and binds payload fields to local variables with static type safety:
+
+```y9
+Option<int> opt = Option.Some(42);
+
+match (opt)
+{
+    case Option.Some(val) do
+    {
+        display.show("Got value: " + val);
+    }
+    case Option.None do
+    {
+        display.show("Nothing");
+    }
+}
+```
+
+### Match Exhaustiveness
+
+When matching against enum types without a case _ fallback, the type checker enforces that all variants are handled.
+
+### Match Expressions
+
+match can also be used directly as an expression yielding a value:
+
+```y9
+string message = match (opt)
+{
+    case Option.Some(v) do "Value is " + v;
+    case Option.None do "Empty";
+};
+```
 
 ---
 
@@ -517,27 +700,23 @@ match (value)
 
 ```y9
 // Single-line comment
+/// documentation comments are recognized but currently have no special behavior.
 ```
 
-`///` documentation comments are recognized but currently have no special behavior.
-
-They are parsed the same way as regular `//` comments and are currently decorative only.
+They are parsed the same way as regular // comments and are currently decorative only.
 
 ---
 
 ## Arithmetic
 
 Basic operators:
+* +
+* -
+* *
+* /
+* %
 
-* `+`
-* `-`
-* `*`
-* `/`
-* `%`
-
-Multiplication and division have higher precedence than addition and subtraction.
-
-Modulo (`%`) returns the remainder of a numeric division.
+Multiplication and division have higher precedence than addition and subtraction. Modulo (%) returns the remainder of a numeric division.
 
 ```y9
 int remainder = 10 % 3;
@@ -567,13 +746,13 @@ Division or modulo by zero causes a runtime error.
 
 ### String Operators
 
-`+` concatenates strings:
++ concatenates strings:
 
 ```y9
 string a = "Hello" + " World";
 ```
 
-`-` removes all occurrences of a substring:
+- removes all occurrences of a substring:
 
 ```y9
 string a = "banana" - "a";
@@ -585,7 +764,7 @@ Result:
 bnn
 ```
 
-`*` repeats a string by an integer:
+* repeats a string by an integer:
 
 ```y9
 string a = "ab" * 3;
@@ -615,14 +794,11 @@ string b = 3 * "ab";
 ## Logical Operators
 
 Supported operators:
+* && — Logical AND
+* || — Logical OR
+* ! — Logical NOT
 
-* `&&` — Logical AND
-* `||` — Logical OR
-* `!` — Logical NOT
-
-Logical operators operate on `bool` values.
-
-`&&` and `||` use short-circuit evaluation.
+Logical operators operate on bool values. && and || use short-circuit evaluation.
 
 ```y9
 bool valid = (x > 0) && (x < 100);
@@ -634,18 +810,13 @@ bool check = isReady || !hasFailed;
 ## Compound Assignment
 
 Supported operators:
+* +=
+* -=
+* *=
+* /=
+* %=
 
-* `+=`
-* `-=`
-* `*=`
-* `/=`
-* `%=`
-
-Numeric types (`int`, `float`, `deci`) support all five.
-
-Strings support `+=` for concatenation.
-
-Compound assignment requires the target variable or mutable struct field to be mutable.
+Numeric types (int, float, deci) support all five. Strings support += for concatenation. Compound assignment requires the target variable or mutable struct field to be mutable.
 
 ```y9
 change int x = 10;
@@ -662,23 +833,14 @@ x %= 3;
 ## Comparisons
 
 Supported operators:
+* ==
+* !=
+* <
+* >
+* <=
+* >=
 
-* `==`
-* `!=`
-* `<`
-* `>`
-* `<=`
-* `>=`
-
-All comparisons produce a `bool`.
-
-Comparisons work across numeric types using numeric widening.
-
-Strings and chars support lexicographic comparison.
-
-Bools support equality comparisons (`==`, `!=`) only.
-
-Arrays, maps, and structs support appropriate equality comparisons.
+All comparisons produce a bool. Comparisons work across numeric types using numeric widening. Strings and chars support lexicographic comparison. Bools support equality comparisons (==, !=) only. Arrays, maps, and structs support appropriate equality comparisons.
 
 ```y9
 bool b1 = 5 < 10;
@@ -709,9 +871,7 @@ else do
 }
 ```
 
-The condition must evaluate to `bool`.
-
-Both block and single-statement forms are supported.
+The condition must evaluate to bool. Both block and single-statement forms are supported.
 
 ```y9
 if (x > 5) do display.show("big");
@@ -725,7 +885,7 @@ Y9+ supports conditional ternary expressions:
 int maxVal = (a > b) ? a : b;
 ```
 
-The condition must evaluate to `bool`.
+The condition must evaluate to bool.
 
 ---
 
@@ -740,7 +900,7 @@ while (condition) do
 }
 ```
 
-Repeats while the condition evaluates to `true`.
+Repeats while the condition evaluates to true.
 
 ### for — Range-Based
 
@@ -751,9 +911,7 @@ for i in 0..10 do
 }
 ```
 
-The end value is exclusive.
-
-An optional `step` is supported:
+The end value is exclusive. An optional step is supported:
 
 ```y9
 for i in 0..10 step 2 do
@@ -773,7 +931,7 @@ for i in 10..0 step -1 do
 
 ### for — Iterable
 
-The `for` loop can iterate directly over arrays and strings.
+The for loop can iterate directly over arrays and strings.
 
 ```y9
 int[] nums = [10, 20, 30];
@@ -784,7 +942,7 @@ for item in nums do
 }
 ```
 
-Strings produce a `chr` for each character:
+Strings produce a chr for each character:
 
 ```y9
 for ch in "Y9+" do
@@ -828,9 +986,7 @@ Skips the remainder of the current iteration and proceeds to the next iteration.
 
 ### try / catch
 
-`try` / `catch` blocks catch runtime errors occurring inside the `try` block.
-
-The `catch` parameter must be explicitly typed as `string`.
+try / catch blocks catch runtime errors occurring inside the try block. The catch parameter must be explicitly typed as string.
 
 ```y9
 try do
@@ -850,43 +1006,27 @@ Y9+ also supports user-defined exception throwing.
 throw "Something went wrong";
 ```
 
-Custom exceptions can be caught using `try / catch`.
+Custom exceptions can be caught using try / catch.
 
 ---
 
 ## Return
 
-`return expr;` immediately exits a function with the evaluated expression result.
-
-`entry main()` may explicitly return an integer-compatible `int`, but an explicit return is optional.
-
-If `entry main()` finishes without reaching a return statement, it automatically returns `0`.
-
-Void functions can use `return;` without an expression.
+return expr; immediately exits a function with the evaluated expression result. entry main() may explicitly return an integer-compatible int, but an explicit return is optional. If entry main() finishes without reaching a return statement, it automatically returns 0. Void functions can use return; without an expression.
 
 ---
 
 ## Scoping
 
-Y9+ uses lexical block scoping.
+Y9+ uses lexical block scoping. Variables declared inside { } are not visible outside that block. Loop variables declared by for are scoped to the loop. Function parameters and local variables are scoped to their function. Struct fields are scoped to their containing struct and are accessed through a struct instance. Top-level global variables have module-level scope. Closures can capture variables from their surrounding lexical scope.
 
-Variables declared inside `{ }` are not visible outside that block.
-
-Loop variables declared by `for` are scoped to the loop.
-
-Function parameters and local variables are scoped to their function.
-
-Struct fields are scoped to their containing struct and are accessed through a struct instance.
-
-Top-level global variables have module-level scope.
-
-Closures can capture variables from their surrounding lexical scope.
+Generic type parameters (declared on functions, structs, and enums using <...>) are lexically scoped to their declaration, preventing conflicts between variable names and type parameter names.
 
 ---
 
 ## Standard Library & Native APIs
 
-Y9+ provides a growing standard library and native runtime API surface accessible through `@bring`.
+Y9+ provides a growing standard library and native runtime API surface accessible through @bring.
 
 ### Mathematics
 
@@ -1079,9 +1219,7 @@ max
 
 ## Escape Sequences
 
-Strings and character literals support escape sequences.
-
-Supported sequences include:
+Strings and character literals support escape sequences. Supported sequences include:
 
 ```text
 \n  Newline
@@ -1112,6 +1250,12 @@ struct Player
     change int score;
 }
 
+enum Option<T>
+{
+    Some(T value),
+    None
+}
+
 fn isEven(int val) -> bool
 {
     return val % 2 == 0;
@@ -1131,6 +1275,18 @@ fn mainScore(int[] nums) -> int
     {
         return acc + value;
     });
+}
+
+fn findFirstPositive(int[] numbers) -> Option<int>
+{
+    for n in numbers do
+    {
+        if (n > 0) do
+        {
+            return Option.Some(n);
+        }
+    }
+    return Option.None;
 }
 
 entry main(string[] args)
@@ -1156,6 +1312,20 @@ entry main(string[] args)
         case 20 do display.show("Perfect");
         case int do display.show("Integer score");
         case _ do display.show("Unknown");
+    }
+
+    Option<int> matchResult = findFirstPositive(numbers);
+
+    match (matchResult)
+    {
+        case Option.Some(val) do
+        {
+            display.show("Found positive value: " + val);
+        }
+        case Option.None do
+        {
+            display.show("No positive values found");
+        }
     }
 
     try do

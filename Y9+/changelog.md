@@ -1,175 +1,71 @@
-# Release Number: 2026.08.10 - 7
+# Release Number: 2026.08.17 - 8
 
-## First-Class Functions, Lambdas & Lexical Closures
+## Parametric Generic Functions
 
-* Functions are now first-class citizens.
-* Functions can be stored in variables, passed as arguments, and returned from function calls.
-* Added anonymous lambda syntax: `fn(params) -> ReturnType { ... }`.
-* Added lexical closure scope capturing.
-* Lambdas can capture variables from their surrounding lexical scopes.
-* Added functional collection methods to arrays:
+* Added support for type parameters in functions: `fn identity<T>(T value) -> T`.
+* Added support for multiple generic type parameters: `fn pair<T, U>(T a, U b) -> Pair<T, U>`.
+* Added automatic generic type argument inference at call sites (e.g. `identity(42)` automatically infers `T = int`).
+* Added explicit type argument invocation syntax (e.g. `identity<int>(42)`).
+* Generic functions support type-safe returns and parameter passing.
 
-  * `.forEach()`
-  * `.filter()`
-  * `.map()`
-  * `.reduce()`
+## Generic Structs
 
-## Native Map Collection Type (`map[K]V`)
+* Added generic type parameters to struct declarations: `struct Box<T> { T value; }`.
+* Added multi-parameter generic structs: `struct Pair<T, U> { T first; U second; }`.
+* Added support for arbitrarily nested generic types: `Box<Box<int>>`.
+* Added recursive generic field type substitution upon property access and mutation.
+* Constructor calls automatically infer or validate generic type arguments: `Box(42)` produces `Box<int>`.
 
-* Added native Map data structure using `map[KeyType]ValueType`.
-* Added map literals using `{ key: value }`.
-* Added map indexing using `map[key]`.
-* Added map methods:
+## Enums & Algebraic Data Types (ADTs)
 
-  * `.get()`
-  * `.set()`
-  * `.has()`
-  * `.remove()`
-  * `.keys()`
+* Added user-defined `enum` declarations with tagged union variants.
+* Variants can be unit variants (`None`) or carry typed payload fields (`Some(T value)`).
+* Added generic enums enabling algebraic data types such as `Option<T>` and `Result<T, E>`:
+  * `enum Option<T> { Some(T value), None }`
+  * `enum Result<T, E> { Ok(T value), Err(E error) }`
+* Added variant instantiation syntax: `Option.Some(42)` and `Option<int>.Some(42)`.
+* Variant fields are statically type-checked at construction.
 
-## Pattern Matching (`match`)
+## Pattern Matching with Enum Destructuring
 
-* Added `match` statements and expressions.
-* Supports direct value matching.
-* Supports wildcard matching using `case _`.
-* Supports type matching using cases such as `case int` and `case string`.
-* Supports fallback cases.
+* Extended `match` statements and expressions to match against enum variants.
+* Added payload destructuring: binds variant payload fields directly into typed local variables in match arms.
+* Added static type propagation into match case bindings via generic type substitution.
+* Added static exhaustiveness checking for enum matches: verifies that all variants of an enum are covered when no `else` fallback is provided.
 
-## HTTP, Networking & WebSockets
+## Generic Higher-Order Functions & Lambdas
 
-* Added native HTTP client functions: `http.get()` and `http.post()`.
-* Added native HTTP server creation using `http.listen(port, handlerFn)`.
-* Added native TCP socket server support using `net.listen(port, handlerFn)`.
-* Added native WebSocket server endpoint support using `ws.server(port, handlerFn)`.
+* Lambdas now support type parameters: `fn<T>(T value) -> T { return value; }`.
+* Added generic higher-order functions: `fn apply<T, U>(T val, fn(T) -> U f) -> U`.
+* Generic functions seamlessly accept lambdas and closures with inferred parameter and return types.
 
-## Multithreading & Synchronization
+## Cross-Module Generic Types
 
-* Added thread spawning using `thread.spawn(scriptPath, args)`.
-* Added thread management using `thread.join(id)` and `thread.isActive(id)`.
-* Added thread synchronization primitives:
+* Generic structs, enums, and functions can be exported using `export`.
+* Imported modules accessed via `@bring` retain generic type signatures across module boundaries.
+* Added module-namespaced generic instantiation and variant access (e.g. `containers.Box<int>` or `containers.Option.Some(10)`).
 
-  * `sync.mutexCreate()`
-  * `sync.mutexLock(id)`
-  * `sync.mutexUnlock(id)`
+## Type Checker & Compiler Machinery
 
-## Operating System, Process & Environment APIs
+* **Bidirectional Type Unification**: Implemented `unifyTypes()` to infer type arguments from call-site arguments automatically.
+* **Type Substitution Engine**: Implemented `substituteType()` to recursively replace type parameters with concrete types across nested structs, enums, and functions.
+* **Type Parameter Scoping**: Added lexical type parameter scopes to prevent naming collisions and illegal shadowing.
+* **Generic Arity & Safety Validation**: The checker enforces exact type argument counts and treats different generic instantiations (such as `Box<int>` and `Box<string>`) as distinct, incompatible types.
+* **Parser Disambiguation**: Added speculative lookahead and backtracking to disambiguate `<` as a comparison operator vs the opening of generic type arguments (`<T>`).
 
-* Added OS inspection methods:
+## Release 8 Summary
 
-  * `os.platform()`
-  * `os.arch()`
-  * `os.hostname()`
-  * `os.tmpdir()`
-  * `os.homedir()`
-  * `os.cpus()`
-  * `os.uptime()`
-  * `os.totalMem()`
-  * `os.freeMem()`
-* Added process control methods:
+Release 8 expands Y9+ into a strongly-typed, parametrically polymorphic language by adding:
 
-  * `process.exec()`
-  * `process.exit()`
-  * `process.pid()`
-  * `process.cwd()`
-  * `process.chdir()`
-  * `process.args()`
-* Added environment variable manipulation:
-
-  * `env.get()`
-  * `env.set()`
-  * `env.has()`
-  * `env.remove()`
-  * `env.all()`
-* Added time and date functionality:
-
-  * `time.now()`
-  * `time.sleep()`
-  * `time.dateString()`
-
-## JSON, Cryptography, Database & Compression
-
-* Added JSON serialization and parsing:
-
-  * `json.parse()`
-  * `json.stringify()`
-* Added cryptographic hashing and encoding:
-
-  * `crypto.sha256()`
-  * `crypto.md5()`
-  * `crypto.base64Encode()`
-  * `crypto.base64Decode()`
-* Added file-backed key-value storage:
-
-  * `db.set()`
-  * `db.get()`
-  * `db.has()`
-  * `db.delete()`
-  * `db.all()`
-  * `db.clear()`
-* Added compression:
-
-  * `compress.gzip()`
-  * `compress.gunzip()`
-  * `compress.deflate()`
-  * `compress.inflate()`
-
-## Data Analysis & Statistics
-
-* Added CSV parsing and stringification:
-
-  * `data.parseCsv()`
-  * `data.toCsv()`
-* Added statistical computation functions:
-
-  * `stats.sum()`
-  * `stats.mean()`
-  * `stats.median()`
-  * `stats.variance()`
-  * `stats.stdDev()`
-  * `stats.min()`
-  * `stats.max()`
-
-## User-Defined Exception Throwing
-
-* Added user-defined exception throwing using `throw`.
-* User code can now raise custom runtime errors.
-* Custom thrown errors can be caught using `try / catch`.
-
-## Internal Architecture & Refactoring
-
-* Modularized the type checker component into `src/checker/`.
-* Split checker functionality into:
-
-  * `context.ts`
-  * `expressions.ts`
-  * `statements.ts`
-  * `checker.ts`
-* Improved internal maintainability and separation of type-checking responsibilities.
-
-## Release 7 Summary
-
-Release 7 significantly expands Y9+ beyond its previous core language features by adding:
-
-* First-class functions
-* Lambdas
-* Lexical closures
-* Higher-order array operations
-* Native maps
-* Pattern matching
-* HTTP
-* TCP networking
-* WebSockets
-* Multithreading
-* Mutex synchronization
-* OS APIs
-* Process APIs
-* Environment variables
-* Time/date APIs
-* JSON
-* Cryptography
-* File-backed databases
-* Compression
-* CSV processing
-* Statistical utilities
-* User-defined exception throwing
-* Improved internal compiler/type-checker architecture
+* Generic functions
+* Generic structs
+* Generic enums / Algebraic Data Types (ADTs)
+* Pattern matching with enum variant destructuring
+* Match exhaustiveness checking
+* Automatic generic type inference
+* Explicit generic type arguments
+* Nested generic types (`Box<Box<T>>`)
+* Generic higher-order functions and lambdas
+* Cross-module generic exports and imports
+* Type unification and recursive substitution engine
+* Disambiguated generic parser grammar

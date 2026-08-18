@@ -38,8 +38,9 @@ The following operators are already supported:
 
 ## Struct Methods / Full OOP
 
-Y9+ supports user-defined `struct` types, fields, construction, property
-access, mutability, arrays of structs, and deep equality.
+Y9+ supports user-defined `struct` types, generic structs such as
+`Box<T>` and `Pair<T, U>`, fields, construction, property access,
+mutability, arrays of structs, and deep equality.
 
 However, methods cannot currently be declared directly inside a `struct`
 definition.
@@ -54,15 +55,27 @@ Full class-based OOP features such as:
 
 are not implemented yet.
 
-## User-Defined Exception Throwing
+## Generic Constraints / Trait Bounds
 
-Y9+ supports `try / catch (string err) do ...` blocks to handle runtime
-errors.
+Y9+ supports full parametric generics for functions, structs, enums,
+lambdas, and higher-order functions.
 
-However, user code cannot yet throw custom exceptions (for example,
-`throw "error"`).
+However, generic type parameters currently do not support constraints or
+trait/interface bounds.
 
-`try / catch` currently catches system and native runtime errors.
+For example, syntax such as:
+
+```y9
+fn add<T: Numeric>(T a, T b) -> T
+{
+    // ...
+}
+```
+
+is not currently supported.
+
+Generic parameters can currently represent any valid Y9+ type without
+requiring a constraint such as `Numeric`, `Comparable`, or `Displayable`.
 
 ## Documentation Generation
 
@@ -74,25 +87,29 @@ API documentation.
 
 Y9+ now provides a substantially developed standard library through `@bring`,
 including functionality for mathematics, IO, filesystems, networking, HTTP,
-cryptography, machine learning utilities, neural networks, and other
-higher-level capabilities.
+cryptography, machine learning utilities, neural networks, operating-system
+APIs, process management, environment variables, time/date APIs, JSON,
+databases, compression, data analysis, and other higher-level capabilities.
 
 The standard library test suite is currently passing completely.
 
 However, some lower-level system and hardware functionality is still not
 implemented, including:
 
-* Environment variables
-* Advanced time/date APIs
-* Process management
-* Operating-system APIs
-* Hardware and sensor APIs
+* Advanced hardware and sensor APIs
 * Serial communication
 * Microcontroller control
 * GPU computing
+* SIMD utilities
 * Image processing
 * Audio processing
 * Geolocation
+* Embedded programming
+* Robotics utilities
+* Computer vision
+* Audio synthesis
+* Text-to-speech
+* Speech recognition
 
 ## Runtime Diagnostics Are Still Limited
 
