@@ -23,45 +23,41 @@ x -= 1;
 
 Bitwise operators are not implemented:
 
-* `&`
-* `|`
-* `^`
-* `~`
-* `<<`
-* `>>`
+- `&`
+- `|`
+- `^`
+- `~`
+- `<<`
+- `>>`
 
 The following operators are already supported:
 
-* `%`
-* `%=`
-* `? :`
+- `%`
+- `%=`
+- `? :`
 
-## Struct Methods / Full OOP
+## Traditional Class-Based OOP / Inheritance
 
-Y9+ supports user-defined `struct` types, generic structs such as
+Y9+ supports user-defined struct types, generic structs such as
 `Box<T>` and `Pair<T, U>`, fields, construction, property access,
-mutability, arrays of structs, and deep equality.
+mutability, arrays of structs, and deep equality. Y9+ also now supports
+inherent methods via `impl`, static methods, traits, default trait methods,
+generic bounds, and trait-based polymorphism.
 
-However, methods cannot currently be declared directly inside a `struct`
-definition.
+However, traditional class-based OOP features such as:
 
-Full class-based OOP features such as:
+- class inheritance (`extends` / `super`)
+- abstract classes
+- access modifiers (`private` / `protected`)
+- virtual method tables with dynamic subclass dispatch
 
-* inheritance
-* interfaces
-* method overriding
-* access modifiers
-* abstract classes
-
-are not implemented yet.
+are not part of the language design. Composition and traits are used instead.
 
 ## Generic Constraints / Trait Bounds
 
 Y9+ supports full parametric generics for functions, structs, enums,
-lambdas, and higher-order functions.
-
-However, generic type parameters currently do not support constraints or
-trait/interface bounds.
+lambdas, and higher-order functions, and now supports generic bounds via
+traits (see above).
 
 For example, syntax such as:
 
@@ -72,10 +68,8 @@ fn add<T: Numeric>(T a, T b) -> T
 }
 ```
 
-is not currently supported.
-
-Generic parameters can currently represent any valid Y9+ type without
-requiring a constraint such as `Numeric`, `Comparable`, or `Displayable`.
+is now supported for trait-based bounds. Generic type parameters can still
+represent any valid Y9+ type when no constraint is specified.
 
 ## Documentation Generation
 
@@ -96,33 +90,37 @@ The standard library test suite is currently passing completely.
 However, some lower-level system and hardware functionality is still not
 implemented, including:
 
-* Advanced hardware and sensor APIs
-* Serial communication
-* Microcontroller control
-* GPU computing
-* SIMD utilities
-* Image processing
-* Audio processing
-* Geolocation
-* Embedded programming
-* Robotics utilities
-* Computer vision
-* Audio synthesis
-* Text-to-speech
-* Speech recognition
+- Advanced hardware and sensor APIs
+- Serial communication
+- Microcontroller control
+- GPU computing
+- SIMD utilities
+- Image processing
+- Audio processing
+- Geolocation
+- Embedded programming
+- Robotics utilities
+- Computer vision
+- Audio synthesis
+- Text-to-speech
+- Speech recognition
 
-## Runtime Diagnostics Are Still Limited
+## Runtime Diagnostics
 
-Runtime errors include source line and column information.
+Runtime errors include source line, column, and runtime call stack
+information.
 
 For example:
 
 ```text
 [12:5] Runtime Error: Division by zero
+Call Stack:
+  at compute [8:14]
+  at main [15:5]
 ```
 
-However, Y9+ does not yet provide full runtime stack traces or advanced
-debugger information.
+However, Y9+ does not yet provide an interactive debugger or step-through
+profiling tooling.
 
 ## Developer Tooling Is Not Yet Fully Implemented
 
@@ -131,10 +129,10 @@ editor integrations are still missing.
 
 Y9+ does not currently include:
 
-* VS Code extension
-* Language Server Protocol (LSP)
-* Code formatter
-* Linter
-* Documentation generator
-* Package manager
-* Dependency manager
+- VS Code extension
+- Language Server Protocol (LSP)
+- Code formatter
+- Linter
+- Documentation generator
+- Package manager
+- Dependency manager

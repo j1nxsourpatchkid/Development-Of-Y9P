@@ -1,71 +1,51 @@
-# Release Number: 2026.08.17 - 8
+# Release Number: 2026.08.18 - 9
 
-## Parametric Generic Functions
+## Traits & Abstract Interfaces
 
-* Added support for type parameters in functions: `fn identity<T>(T value) -> T`.
-* Added support for multiple generic type parameters: `fn pair<T, U>(T a, U b) -> Pair<T, U>`.
-* Added automatic generic type argument inference at call sites (e.g. `identity(42)` automatically infers `T = int`).
-* Added explicit type argument invocation syntax (e.g. `identity<int>(42)`).
-* Generic functions support type-safe returns and parameter passing.
+* Added `trait` declarations to define shared method contracts: `trait Printable { fn toString(self) -> string; }`.
+* Added `Self` type keyword representing the implementing concrete type.
+* Added support for generic traits: `trait Transformer<T> { fn transform(self, T val) -> Self; }`.
+* Added support for default trait method bodies that can be overridden by implementations.
+* Added trait exporting and cross-module trait imports via `@bring`.
 
-## Generic Structs
+## Implementations (`impl`) & Struct Methods
 
-* Added generic type parameters to struct declarations: `struct Box<T> { T value; }`.
-* Added multi-parameter generic structs: `struct Pair<T, U> { T first; U second; }`.
-* Added support for arbitrarily nested generic types: `Box<Box<int>>`.
-* Added recursive generic field type substitution upon property access and mutation.
-* Constructor calls automatically infer or validate generic type arguments: `Box(42)` produces `Box<int>`.
+* Added inherent method implementation blocks: `impl Vector2 { fn length(self) -> float { ... } }`.
+* Added trait implementation blocks: `impl Printable for Vector2 { fn toString(self) -> string { ... } }`.
+* Added trait implementations for primitive types: `impl Printable for int { ... }`.
+* Added static method support (methods without a `self` receiver, e.g., `Vector2.new(x, y)`).
+* Added receiver mutability annotations:
+  * `self` (immutable receiver — prevents mutating instance fields or calling mutating methods).
+  * `change self` (mutable receiver — allows field mutation on `self`).
+* Added strict call-site mutability enforcement: calling a `change self` method on an immutable instance or immutable struct field triggers a compile-time `TypeError`.
+* Added Coherence / Orphan Rule validation: an `impl Trait for Target` is rejected if neither the trait nor the target type is declared in the current module.
 
-## Enums & Algebraic Data Types (ADTs)
+## Generic Constraints & Trait Bounds
 
-* Added user-defined `enum` declarations with tagged union variants.
-* Variants can be unit variants (`None`) or carry typed payload fields (`Some(T value)`).
-* Added generic enums enabling algebraic data types such as `Option<T>` and `Result<T, E>`:
-  * `enum Option<T> { Some(T value), None }`
-  * `enum Result<T, E> { Ok(T value), Err(E error) }`
-* Added variant instantiation syntax: `Option.Some(42)` and `Option<int>.Some(42)`.
-* Variant fields are statically type-checked at construction.
+* Added single trait bound constraints on type parameters: `fn printItem<T: Printable>(T item)`.
+* Added multiple trait bound syntax using `+`: `fn process<T: Printable + Summarizable>(T item)`.
+* Trait bounds are supported on generic functions, generic structs, generic traits, and generic `impl` blocks.
+* Added compile-time trait bound satisfaction checking during type unification and invocation.
 
-## Pattern Matching with Enum Destructuring
+## Language Protocols & Operator Hooks
 
-* Extended `match` statements and expressions to match against enum variants.
-* Added payload destructuring: binds variant payload fields directly into typed local variables in match arms.
-* Added static type propagation into match case bindings via generic type substitution.
-* Added static exhaustiveness checking for enum matches: verifies that all variants of an enum are covered when no `else` fallback is provided.
+* **Comparison Protocol**: Implementing `compare(self, TargetType other) -> int` overrides `<`, `<=`, `>`, `>=`, `==`, and `!=`.
+* **Equality Protocol**: Implementing `equals(self, TargetType other) -> bool` overrides `==` and `!=`.
+* **Display Protocol**: `display.show(val)` automatically invokes `toString(self) -> string` when implemented.
+* **Custom Iterator Protocol**: `for item in iterable do` automatically drives any custom type implementing `next(change self) -> Option<T>` until `Option.None`.
 
-## Generic Higher-Order Functions & Lambdas
+## Release 9 Summary
 
-* Lambdas now support type parameters: `fn<T>(T value) -> T { return value; }`.
-* Added generic higher-order functions: `fn apply<T, U>(T val, fn(T) -> U f) -> U`.
-* Generic functions seamlessly accept lambdas and closures with inferred parameter and return types.
+Release 9 expands Y9+ into a trait-oriented, protocol-driven language by adding:
 
-## Cross-Module Generic Types
-
-* Generic structs, enums, and functions can be exported using `export`.
-* Imported modules accessed via `@bring` retain generic type signatures across module boundaries.
-* Added module-namespaced generic instantiation and variant access (e.g. `containers.Box<int>` or `containers.Option.Some(10)`).
-
-## Type Checker & Compiler Machinery
-
-* **Bidirectional Type Unification**: Implemented `unifyTypes()` to infer type arguments from call-site arguments automatically.
-* **Type Substitution Engine**: Implemented `substituteType()` to recursively replace type parameters with concrete types across nested structs, enums, and functions.
-* **Type Parameter Scoping**: Added lexical type parameter scopes to prevent naming collisions and illegal shadowing.
-* **Generic Arity & Safety Validation**: The checker enforces exact type argument counts and treats different generic instantiations (such as `Box<int>` and `Box<string>`) as distinct, incompatible types.
-* **Parser Disambiguation**: Added speculative lookahead and backtracking to disambiguate `<` as a comparison operator vs the opening of generic type arguments (`<T>`).
-
-## Release 8 Summary
-
-Release 8 expands Y9+ into a strongly-typed, parametrically polymorphic language by adding:
-
-* Generic functions
-* Generic structs
-* Generic enums / Algebraic Data Types (ADTs)
-* Pattern matching with enum variant destructuring
-* Match exhaustiveness checking
-* Automatic generic type inference
-* Explicit generic type arguments
-* Nested generic types (`Box<Box<T>>`)
-* Generic higher-order functions and lambdas
-* Cross-module generic exports and imports
-* Type unification and recursive substitution engine
-* Disambiguated generic parser grammar
+* `trait` declarations with default methods
+* `impl` blocks for inherent methods and trait implementations
+* Static methods and constructors
+* `Self` type and receiver mutability (`self` vs `change self`)
+* Trait implementations for primitive types
+* Single and multiple trait bounds (`<T: Trait1 + Trait2>`)
+* Orphan rule coherence enforcement
+* Operator overloading via `compare` and `equals`
+* Custom `for..in` iteration protocol via `next()`
+* Display integration via `toString()`
+* Static immutability path enforcement
