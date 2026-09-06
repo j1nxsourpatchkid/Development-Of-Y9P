@@ -42,7 +42,7 @@
 * ❌ Audio synthesis
 * ❌ Text-to-speech
 * ❌ Speech recognition
-* ✅ Compiler tooling (CLI: run, check, test, fmt, repl)
+* ✅ Compiler tooling (CLI: run, check, test, fmt, repl, ast)
 * ❌ Plugin system
 * ❌ Package manager
 * ✅ Calculator

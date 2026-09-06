@@ -1,33 +1,34 @@
-# Release Number: 2026.09.16 - 10
+# Release Number: 2026.09.16 - 11
 
-## Resilient Parser & Diagnostic Engine
+## Deterministic Resource Cleanup (`defer`)
 
-* Replaced single-crash errors with a multi-diagnostic collector (`DiagnosticBag`).
-* Added panic-mode parser synchronization to report multiple syntax and type errors in one run.
-* Added terminal code rendering with line numbers, file paths, and ASCII caret pointers (`^`) highlighting error locations.
+* Added `defer { ... }` block syntax.
+* Deferred statements execute in reverse (LIFO) order upon exiting a function or `entry main`.
+* Cleanup is guaranteed across standard returns, normal function completion, and early-return error propagation.
 
-## Language Ergonomics
+## Idiomatic Error Propagation (`?`)
 
-* **String Interpolation**: Added formatted strings using `$"Hello {name}"` and backticks (`` `...` ``).
-* **Bitwise Operators**: Added `&`, `|`, `^`, `~`, `<<`, `>>` and compound assignments `&=`, `|=`, `^=`, `<<=`, `>>=`.
-* **Ergonomic Unwrap (`?`)**: Added postfix unwrap operator for `Option<T>` and `Result<T, E>`.
+* Upgraded `?` from fatal runtime aborts to automatic early error bubbling.
+* Using `expr?` in a function returning `Option<T>` returns `Option.None` automatically on missing values.
+* Using `expr?` in a function returning `Result<T, E>` returns `Result.Err` automatically on errors without matching boilerplate.
 
-## Native Testing Framework (`y9 test`)
+## Module Import Aliasing & Specifiers
 
-* Added `test "name" { ... }` block declaration syntax.
-* Added native `assert(condition, message?)` statement.
-* Added `y9 test <file.y9>` CLI command with execution timers and pass/fail summaries.
+* **Import Aliasing**: Added support for `@bring "path" as Alias;` to eliminate namespace collisions.
+* **Selective Imports**: Added support for `@bring { funcA, funcB } from "path";` to import symbols directly into local scope.
 
-## Background Multithreading
+## Systems Concurrency & Binary IO Engine
 
-* Replaced synchronous process execution with Node.js `worker_threads`.
-* Background threads now execute concurrently on separate OS thread pools with `SharedArrayBuffer` and `Atomics`.
+* **Channels (`parallel.y9`)**: Added lock-free inter-thread communication channels (`create_channel()`, `send()`, `recv()`).
+* **Binary Buffers (`io.y9`)**: Added low-level raw byte buffer allocation and UTF-8 string streaming (`alloc()`, `write()`, `read()`).
 
-## Unified CLI Toolchain & REPL
+## Vectorized Machine Learning Primitives (`ml.y9`)
 
-* Introduced the `y9` CLI suite:
-  * `y9 run <file>`: Typecheck and execute.
-  * `y9 check <file>`: Static analysis check without running.
-  * `y9 test <file>`: Run test suites.
-  * `y9 fmt <file>`: Automatic source code formatter.
-  * `y9 repl`: Interactive REPL.
+* Backed `ml.y9` with native engine operations:
+  * 2D Matrix multiplication (`matmul`).
+  * Vector dot products (`dot`).
+  * Native activation functions (`relu` and `sigmoid`).
+
+## IDE Foundation (`y9 ast`)
+
+* Added `y9 ast <file.y9>` CLI command to emit syntax trees in clean JSON format for the Release 13 IDE.

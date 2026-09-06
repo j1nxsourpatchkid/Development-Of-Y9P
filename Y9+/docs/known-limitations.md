@@ -38,29 +38,13 @@ However, traditional class-based OOP features such as:
 
 are not part of the language design. Composition and traits are used instead.
 
-## Generic Constraints / Trait Bounds
+## Tuples and Destructuring
 
-Y9+ supports full parametric generics for functions, structs, enums,
-lambdas, and higher-order functions, and now supports generic bounds via
-traits (see above).
-
-For example, syntax such as:
-
-```y9
-fn add<T: Numeric>(T a, T b) -> T
-{
-    // ...
-}
+Tuple types `(T, U)` and tuple destructuring assignments `(a, b) = get_pair();` are not implemented yet. Return structs or arrays instead.
 ```
 
 is now supported for trait-based bounds. Generic type parameters can still
 represent any valid Y9+ type when no constraint is specified.
-
-## Documentation Generation
-
-Y9+ supports documentation comments using `///`, but there is currently no
-documentation-generation tool that converts these comments into generated
-API documentation.
 
 ## Remaining System-Level APIs
 
@@ -90,13 +74,9 @@ implemented, including:
 - Text-to-speech
 - Speech recognition
 
-For example:
+## Debugger & Profiling Tooling
 
-```text
-[12:5] Runtime Error: Division by zero
-Call Stack:
-  at compute [8:14]
-  at main [15:5]
+Y9+ prints runtime stack traces on errors, but does not yet provide an interactive step-through debugger (breakpoints, watch expressions) or CPU/memory profiling tools.
 ```
 
 However, Y9+ does not yet provide an interactive debugger or step-through
@@ -104,7 +84,7 @@ profiling tooling.
 
 ## Developer Tooling & Ecosystem Roadmap
 
-Y9+ includes command-line tooling (`y9 run`, `y9 check`, `y9 test`, `y9 fmt`, and `y9 repl`). A standalone IDE is planned for Release 13.
+Y9+ includes command-line tooling (`y9 run`, `y9 check`, `y9 test`, `y9 fmt`, `y9 repl`, and `y9 ast`). A standalone IDE is planned for Release 13.
 
 Y9+ does not currently include:
 

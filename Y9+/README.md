@@ -10,7 +10,7 @@ File extension: `.y9`
 
 ## Status
 
-Y9+ is in active development (Release 10). The toolchain includes the compiler,
+Y9+ is in active development (Release 11). The toolchain includes the compiler,
 runtime, static type checker, native test runner, formatter, and interactive REPL.
 
 This manual reflects only what is currently implemented and working — see
