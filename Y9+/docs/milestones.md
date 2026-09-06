@@ -30,7 +30,7 @@
 * ❌ GPU computing
 * ❌ SIMD utilities
 * ✅ Parallel computing
-* ✅ Multithreading
+* ✅ Multithreading (Worker threads & atomic mutexes)
 * ✅ Process management
 * ✅ Operating-system APIs
 * ❌ Embedded programming
@@ -42,7 +42,7 @@
 * ❌ Audio synthesis
 * ❌ Text-to-speech
 * ❌ Speech recognition
-* ❌ Compiler tooling
+* ✅ Compiler tooling (CLI: run, check, test, fmt, repl)
 * ❌ Plugin system
 * ❌ Package manager
 * ✅ Calculator

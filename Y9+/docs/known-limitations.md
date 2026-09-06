@@ -21,21 +21,6 @@ x += 1;
 x -= 1;
 ```
 
-Bitwise operators are not implemented:
-
-- `&`
-- `|`
-- `^`
-- `~`
-- `<<`
-- `>>`
-
-The following operators are already supported:
-
-- `%`
-- `%=`
-- `? :`
-
 ## Traditional Class-Based OOP / Inheritance
 
 Y9+ supports user-defined struct types, generic structs such as
@@ -105,11 +90,6 @@ implemented, including:
 - Text-to-speech
 - Speech recognition
 
-## Runtime Diagnostics
-
-Runtime errors include source line, column, and runtime call stack
-information.
-
 For example:
 
 ```text
@@ -122,16 +102,15 @@ Call Stack:
 However, Y9+ does not yet provide an interactive debugger or step-through
 profiling tooling.
 
-## Developer Tooling Is Not Yet Fully Implemented
+## Developer Tooling & Ecosystem Roadmap
 
-Y9+ includes development tooling and a full IDE, but several ecosystem and
-editor integrations are still missing.
+Y9+ includes command-line tooling (`y9 run`, `y9 check`, `y9 test`, `y9 fmt`, and `y9 repl`). A standalone IDE is planned for Release 13.
 
 Y9+ does not currently include:
 
+- Standalone IDE (Target: Release 13)
+- Language Server Protocol (LSP) (Target: Release 12)
 - VS Code extension
-- Language Server Protocol (LSP)
-- Code formatter
 - Linter
 - Documentation generator
 - Package manager

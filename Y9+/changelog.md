@@ -1,51 +1,33 @@
-# Release Number: 2026.08.18 - 9
+# Release Number: 2026.09.16 - 10
 
-## Traits & Abstract Interfaces
+## Resilient Parser & Diagnostic Engine
 
-* Added `trait` declarations to define shared method contracts: `trait Printable { fn toString(self) -> string; }`.
-* Added `Self` type keyword representing the implementing concrete type.
-* Added support for generic traits: `trait Transformer<T> { fn transform(self, T val) -> Self; }`.
-* Added support for default trait method bodies that can be overridden by implementations.
-* Added trait exporting and cross-module trait imports via `@bring`.
+* Replaced single-crash errors with a multi-diagnostic collector (`DiagnosticBag`).
+* Added panic-mode parser synchronization to report multiple syntax and type errors in one run.
+* Added terminal code rendering with line numbers, file paths, and ASCII caret pointers (`^`) highlighting error locations.
 
-## Implementations (`impl`) & Struct Methods
+## Language Ergonomics
 
-* Added inherent method implementation blocks: `impl Vector2 { fn length(self) -> float { ... } }`.
-* Added trait implementation blocks: `impl Printable for Vector2 { fn toString(self) -> string { ... } }`.
-* Added trait implementations for primitive types: `impl Printable for int { ... }`.
-* Added static method support (methods without a `self` receiver, e.g., `Vector2.new(x, y)`).
-* Added receiver mutability annotations:
-  * `self` (immutable receiver — prevents mutating instance fields or calling mutating methods).
-  * `change self` (mutable receiver — allows field mutation on `self`).
-* Added strict call-site mutability enforcement: calling a `change self` method on an immutable instance or immutable struct field triggers a compile-time `TypeError`.
-* Added Coherence / Orphan Rule validation: an `impl Trait for Target` is rejected if neither the trait nor the target type is declared in the current module.
+* **String Interpolation**: Added formatted strings using `$"Hello {name}"` and backticks (`` `...` ``).
+* **Bitwise Operators**: Added `&`, `|`, `^`, `~`, `<<`, `>>` and compound assignments `&=`, `|=`, `^=`, `<<=`, `>>=`.
+* **Ergonomic Unwrap (`?`)**: Added postfix unwrap operator for `Option<T>` and `Result<T, E>`.
 
-## Generic Constraints & Trait Bounds
+## Native Testing Framework (`y9 test`)
 
-* Added single trait bound constraints on type parameters: `fn printItem<T: Printable>(T item)`.
-* Added multiple trait bound syntax using `+`: `fn process<T: Printable + Summarizable>(T item)`.
-* Trait bounds are supported on generic functions, generic structs, generic traits, and generic `impl` blocks.
-* Added compile-time trait bound satisfaction checking during type unification and invocation.
+* Added `test "name" { ... }` block declaration syntax.
+* Added native `assert(condition, message?)` statement.
+* Added `y9 test <file.y9>` CLI command with execution timers and pass/fail summaries.
 
-## Language Protocols & Operator Hooks
+## Background Multithreading
 
-* **Comparison Protocol**: Implementing `compare(self, TargetType other) -> int` overrides `<`, `<=`, `>`, `>=`, `==`, and `!=`.
-* **Equality Protocol**: Implementing `equals(self, TargetType other) -> bool` overrides `==` and `!=`.
-* **Display Protocol**: `display.show(val)` automatically invokes `toString(self) -> string` when implemented.
-* **Custom Iterator Protocol**: `for item in iterable do` automatically drives any custom type implementing `next(change self) -> Option<T>` until `Option.None`.
+* Replaced synchronous process execution with Node.js `worker_threads`.
+* Background threads now execute concurrently on separate OS thread pools with `SharedArrayBuffer` and `Atomics`.
 
-## Release 9 Summary
+## Unified CLI Toolchain & REPL
 
-Release 9 expands Y9+ into a trait-oriented, protocol-driven language by adding:
-
-* `trait` declarations with default methods
-* `impl` blocks for inherent methods and trait implementations
-* Static methods and constructors
-* `Self` type and receiver mutability (`self` vs `change self`)
-* Trait implementations for primitive types
-* Single and multiple trait bounds (`<T: Trait1 + Trait2>`)
-* Orphan rule coherence enforcement
-* Operator overloading via `compare` and `equals`
-* Custom `for..in` iteration protocol via `next()`
-* Display integration via `toString()`
-* Static immutability path enforcement
+* Introduced the `y9` CLI suite:
+  * `y9 run <file>`: Typecheck and execute.
+  * `y9 check <file>`: Static analysis check without running.
+  * `y9 test <file>`: Run test suites.
+  * `y9 fmt <file>`: Automatic source code formatter.
+  * `y9 repl`: Interactive REPL.
